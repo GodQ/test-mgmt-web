@@ -25,6 +25,11 @@ export default new Router({
                     meta: { title: '自定义图标' }
                 },
                 {
+                    path: '/test_report',
+                    component: resolve => require(['../components/page/test_report.vue'], resolve),
+                    meta: { title: 'Test Report' }
+                },
+                {
                     path: '/table',
                     component: resolve => require(['../components/page/BaseTable.vue'], resolve),
                     meta: { title: '基础表格' }

@@ -2,8 +2,8 @@ import request from '../utils/request';
 
 export const fetchData = (query) => {
     return request({
-        url: '/ms/table/list',
-        method: 'post',
+        url: '/test_report',
+        method: 'get',
         data: query
     })
 }
