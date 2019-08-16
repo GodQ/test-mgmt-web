@@ -75,7 +75,7 @@
 </template>
 
 <script>
-    import { fetchData } from '../../api/index';
+    import { fetchData } from '../../api/data_provider';
     export default {
         name: 'test_result',
         data() {
