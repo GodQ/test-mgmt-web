@@ -2,7 +2,7 @@
     <div class="table">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> Test Report</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-cascades"></i> Test Result</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
@@ -20,7 +20,7 @@
                 </el-table-column>
                 <el-table-column prop="case_name" label="TestCase" sortable>
                 </el-table-column>
-                <el-table-column prop="status" label="Status" sortable>
+                <el-table-column prop="case_result" label="Status" sortable>
                 </el-table-column>
                 <el-table-column prop="comment" label="Comment">
                 </el-table-column>
@@ -31,10 +31,10 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="pagination">
-                <el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="1000">
+            <!-- <div class="pagination">
+                <el-pagination background @current-change="handleCurrentChange" :page-size=8 layout="prev, pager, next" :total="100">
                 </el-pagination>
-            </div>
+            </div> -->
         </div>
 
         <!-- 编辑弹出框 -->
@@ -50,7 +50,7 @@
                     <el-input v-model="form.testrun_id"></el-input>
                 </el-form-item>
                 <el-form-item label="Status">
-                    <el-input v-model="form.status"></el-input>
+                    <el-input v-model="form.case_result"></el-input>
                 </el-form-item>
                 <el-form-item label="comment">
                     <el-input v-model="form.comment"></el-input>
@@ -77,7 +77,7 @@
 <script>
     import { fetchData } from '../../api/index';
     export default {
-        name: 'test_report',
+        name: 'test_result',
         data() {
             return {
                 tableData: [],
@@ -93,7 +93,7 @@
                     case_id: '',
                     case_name: '',
                     testrun_id: '',
-                    status: '',
+                    case_result: '',
                     comment: ''
                 },
                 idx: -1,
@@ -119,7 +119,7 @@
                             (this.select_component==='' || d.index===this.select_component) &&
                             (d.case_name.indexOf(this.select_word) > -1 ||
                                 d.testrun_id.toString().indexOf(this.select_word) > -1 ||
-                                d.status.toString().indexOf(this.select_word)>-1 )
+                                d.case_result.toString().indexOf(this.select_word)>-1 )
                         ) {
                             return d;
                         }
@@ -133,7 +133,7 @@
                 this.cur_page = val;
                 this.getData();
             },
-            // 获取 easy-mock 的模拟数据
+            // 获取 test result 数据
             getData() {
                 fetchData({
                     page: this.cur_page
@@ -145,7 +145,7 @@
                 this.is_search = true;
             },
             formatter(row, column) {
-                return row.status;
+                return row.case_result;
             },
             filterTag(value, row) {
                 return row.tag === value;
@@ -157,7 +157,7 @@
                     case_id: row.case_id,
                     case_name: row.case_name,
                     testrun_id: row.testrun_id,
-                    status: row.status,
+                    case_result: row.case_result,
                     comment: row.comment
                 }
                 this.editVisible = true;

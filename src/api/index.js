@@ -1,9 +1,10 @@
 import request from '../utils/request';
 
 export const fetchData = (query) => {
+    console.log(query)
     return request({
-        url: '/test_report',
-        method: 'get',
+        url: '/api/test_result',
+        method: 'patch',
         data: query
     })
 }

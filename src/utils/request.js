@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const service = axios.create({
     // process.env.NODE_ENV === 'development' 来判断是否开发环境
-    baseURL: 'https://www.easy-mock.com/mock/5d557cd43648ff2af04ca991/vue-admin',
+    // baseURL: 'https://www.easy-mock.com/mock/5d557cd43648ff2af04ca991/vue-admin',
     timeout: 5000
 })
 
@@ -15,6 +15,7 @@ service.interceptors.request.use( config => {
 
 service.interceptors.response.use(response => {
     if(response.status === 200){
+        console.log(response.data.data.length)
         return response.data;
     }else{
         Promise.reject();

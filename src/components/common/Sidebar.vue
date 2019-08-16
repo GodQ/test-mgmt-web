@@ -45,8 +45,8 @@
                     },
                     {
                         icon: 'el-icon-lx-cascades',
-                        index: 'test_report',
-                        title: 'Test Report'
+                        index: 'test_result',
+                        title: 'Test Result'
                     },
                     {
                         icon: 'el-icon-lx-cascades',
