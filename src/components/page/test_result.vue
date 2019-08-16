@@ -7,14 +7,15 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-button type="primary" icon="el-icon-delete" class="handle-del mr10" @click="delAll">Batch Delete</el-button>
+                <el-button type="primary" icon="el-icon-lx-refresh" @click="reload">Reload</el-button> 
                 <el-select v-model="select_component" placeholder="Select Component" class="handle-select mr10">
                     <el-option key="1" label="godq" value="godq"></el-option>
                 </el-select>
                 <el-input v-model="select_word" placeholder="search keyword" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="search">Search</el-button>
             </div>
-            <el-table :data="data" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
+            <el-table :data="view_data.slice((cur_page-1) * page_size, cur_page * page_size)" 
+              border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="testrun_id" label="TestRun id" sortable>
                 </el-table-column>
@@ -27,14 +28,14 @@
                 <el-table-column label="Actions" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                        <el-button type="text" icon="el-icon-delete" class="red" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <!-- <div class="pagination">
-                <el-pagination background @current-change="handleCurrentChange" :page-size=8 layout="prev, pager, next" :total="100">
+            <div class="pagination">
+                <el-pagination background @current-change="handleCurrentChange" 
+                    :page-size="page_size" layout="prev, pager, next" :total="view_num">
                 </el-pagination>
-            </div> -->
+            </div>
         </div>
 
         <!-- 编辑弹出框 -->
@@ -62,15 +63,6 @@
                 <el-button type="primary" @click="saveEdit">Submit</el-button>
             </span>
         </el-dialog>
-
-        <!-- 删除提示框 -->
-        <el-dialog title="Alert" :visible.sync="delVisible" width="300px" center>
-            <div class="del-dialog-cnt">Delete?</div>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="delVisible = false">Cancel</el-button>
-                <el-button type="primary" @click="deleteRow">Submit</el-button>
-            </span>
-        </el-dialog>
     </div>
 </template>
 
@@ -81,23 +73,22 @@
         data() {
             return {
                 tableData: [],
+                view_data: [],
                 cur_page: 1,
+                page_size: 5,
+                total_num: 0,
+                view_num: 0,
                 multipleSelection: [],
                 select_component: '',
                 select_word: '',
-                del_list: [],
-                is_search: false,
                 editVisible: false,
-                delVisible: false,
                 form: {
                     case_id: '',
                     case_name: '',
                     testrun_id: '',
                     case_result: '',
                     comment: ''
-                },
-                idx: -1,
-                id: -1
+                }
             }
         },
         created() {
@@ -105,44 +96,40 @@
         },
         computed: {
             data() {
-                return this.tableData.filter((d) => {
-                    let is_del = false;
-                    for (let i = 0; i < this.del_list.length; i++) {
-                        if (d.name === this.del_list[i].name) {
-                            is_del = true;
-                            break;
-                        }
-                    }
-                    console.log(d.testrun_id)
-                    if (!is_del) {
-                        if (
-                            (this.select_component==='' || d.index===this.select_component) &&
-                            (d.case_name.indexOf(this.select_word) > -1 ||
-                                d.testrun_id.toString().indexOf(this.select_word) > -1 ||
-                                d.case_result.toString().indexOf(this.select_word)>-1 )
-                        ) {
-                            return d;
-                        }
-                    }
-                })
+                return this.view_data
             }
         },
         methods: {
             // 分页导航
             handleCurrentChange(val) {
                 this.cur_page = val;
-                this.getData();
+                // this.getData();
             },
             // 获取 test result 数据
             getData() {
-                fetchData({
-                    page: this.cur_page
-                }).then((res) => {
+                fetchData({page: this.cur_page}).then((res) => {
                     this.tableData = res.data;
+                    this.total_num = this.tableData.length
+                    this.view_data = this.tableData
+                    this.view_num = this.total_num
                 })
             },
             search() {
-                this.is_search = true;
+                this.view_data = this.tableData.filter((d) => {
+                    console.log(this.select_word)
+                    if (
+                        (this.select_component==='' || d.index===this.select_component) &&
+                        (d.case_name.indexOf(this.select_word) > -1 ||
+                            d.testrun_id.toString().indexOf(this.select_word) > -1 ||
+                            d.case_result.toString().indexOf(this.select_word)>-1 )
+                    ) {
+                        return d;
+                    }
+                })
+                this.view_num = this.view_data.length
+            },
+            reload() {
+                this.getData()
             },
             formatter(row, column) {
                 return row.case_result;
@@ -151,31 +138,15 @@
                 return row.tag === value;
             },
             handleEdit(index, row) {
-                this.idx = index;
-                this.id = row.id;
-                this.form = {
-                    case_id: row.case_id,
-                    case_name: row.case_name,
-                    testrun_id: row.testrun_id,
-                    case_result: row.case_result,
-                    comment: row.comment
-                }
+                // this.form = {
+                //     case_id: row.case_id,
+                //     case_name: row.case_name,
+                //     testrun_id: row.testrun_id,
+                //     case_result: row.case_result,
+                //     comment: row.comment
+                // }
+                this.form = JSON.parse(JSON.stringify(row))
                 this.editVisible = true;
-            },
-            handleDelete(index, row) {
-                this.idx = index;
-                this.id = row.id;
-                this.delVisible = true;
-            },
-            delAll() {
-                const length = this.multipleSelection.length;
-                let str = '';
-                this.del_list = this.del_list.concat(this.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    str += this.multipleSelection[i].case_id + ' ';
-                }
-                this.$message.error("Deleted " + str);
-                this.multipleSelection = [];
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -183,30 +154,19 @@
             // 保存编辑
             saveEdit() {
                 this.editVisible = false;
-                this.$message.success(`Edit line ${this.idx+1} successfully`);
-                if(this.tableData[this.idx].id === this.id){
-                    this.$set(this.tableData, this.idx, this.form);
-                }else{
-                    for(let i = 0; i < this.tableData.length; i++){
-                        if(this.tableData[i].id === this.id){
-                            this.$set(this.tableData, i, this.form);
-                            return ;
-                        }
+                this.$message.success(`Edit successfully`);
+                for(let i = 0; i < this.tableData.length; i++){
+                    if(this.tableData[i].case_id === this.form.case_id &&
+                        this.tableData[i].testrun_id === this.form.testrun_id){
+                        this.$set(this.tableData, i, this.form);
+                        break ;
                     }
                 }
-            },
-            // 确定删除
-            deleteRow(){
-                this.$message.success('Deleted');
-                this.delVisible = false;
-                if(this.tableData[this.idx].id === this.id){
-                    this.tableData.splice(this.idx, 1);
-                }else{
-                    for(let i = 0; i < this.tableData.length; i++){
-                        if(this.tableData[i].id === this.id){
-                            this.tableData.splice(i, 1);
-                            return ;
-                        }
+                for(let i = 0; i < this.view_data.length; i++){
+                    if(this.view_data[i].case_id === this.form.case_id &&
+                        this.view_data[i].testrun_id === this.form.testrun_id){
+                        this.$set(this.view_data, i, this.form);
+                        return ;
                     }
                 }
             }
@@ -221,7 +181,7 @@
     }
 
     .handle-select {
-        width: 120px;
+        width: 180px;
     }
 
     .handle-input {
