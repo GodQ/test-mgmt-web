@@ -3,7 +3,7 @@ import qs from 'qs'
 
 const service = axios.create({
     // process.env.NODE_ENV === 'development' 来判断是否开发环境
-    // baseURL: 'https://www.easy-mock.com/mock/5d557cd43648ff2af04ca991/vue-admin',
+    // baseURL: 'https://www.easy-mock.com/mock/5d557cd43648ff2af04ca991/test-mgmt',
     timeout: 5000
 })
 
