@@ -67,7 +67,7 @@
 </template>
 
 <script>
-    import { fetchData } from '../../api/data_provider';
+    import { fetchData, updateData } from '../../api/data_provider';
     export default {
         name: 'test_result',
         data() {
@@ -108,7 +108,7 @@
             // 获取 test result 数据
             getData() {
                 fetchData({page: this.cur_page}).then((res) => {
-                    this.tableData = res.data;
+                    this.tableData = res.data.data;
                     this.total_num = this.tableData.length
                     this.view_data = this.tableData
                     this.view_num = this.total_num
@@ -154,21 +154,24 @@
             // 保存编辑
             saveEdit() {
                 this.editVisible = false;
-                this.$message.success(`Edit successfully`);
-                for(let i = 0; i < this.tableData.length; i++){
-                    if(this.tableData[i].case_id === this.form.case_id &&
-                        this.tableData[i].testrun_id === this.form.testrun_id){
-                        this.$set(this.tableData, i, this.form);
-                        break ;
+                updateData(this.form).then((res) => {
+                    console.log(res)
+                    for(let i = 0; i < this.tableData.length; i++){
+                        if(this.tableData[i].case_id === this.form.case_id &&
+                            this.tableData[i].testrun_id === this.form.testrun_id){
+                            this.$set(this.tableData, i, this.form);
+                            break ;
+                        }
                     }
-                }
-                for(let i = 0; i < this.view_data.length; i++){
-                    if(this.view_data[i].case_id === this.form.case_id &&
-                        this.view_data[i].testrun_id === this.form.testrun_id){
-                        this.$set(this.view_data, i, this.form);
-                        return ;
+                    for(let i = 0; i < this.view_data.length; i++){
+                        if(this.view_data[i].case_id === this.form.case_id &&
+                            this.view_data[i].testrun_id === this.form.testrun_id){
+                            this.$set(this.view_data, i, this.form);
+                            break ;
+                        }
                     }
-                }
+                    this.$message.success(`Save successfully`);
+                }).catch((e) => {});
             }
         }
     }

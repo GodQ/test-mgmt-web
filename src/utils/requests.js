@@ -7,16 +7,17 @@ const service = axios.create({
     timeout: 5000
 })
 
-service.interceptors.request.use( config => {
-    return config;
-}, error => {
-    console.log(error);
-    return Promise.reject();
-})
+// service.interceptors.request.use( config => {
+//     return config;
+// }, error => {
+//     console.log(error);
+//     return Promise.reject();
+// })
 
 service.interceptors.response.use(response => {
-    if(response.status === 200){
-        return response.data;
+    if(parseInt(response.status/100) === 2){
+        console.log(response.data)
+        return response;
     }else{
         return Promise.reject();
     }
@@ -34,18 +35,34 @@ export default {
             params: params
         })
     },
+    delete(url, params) {
+        if (!url) return;
+        return service({
+            url: url,
+            method: 'delete',
+            params: params
+        })
+    },
     post(url, data) {
         if (!url) return;
-        return instance({
+        return service({
             method: 'post',
             url: url,
             data: qs.stringify(data),
         })
-      },
-    postFile(url, data) {
+    },
+    put(url, data) {
         if (!url) return;
-        return instance({
-            method: 'post',
+        return service({
+            method: 'put',
+            url: url,
+            data: data
+        })
+    },
+    patch(url, data) {
+        if (!url) return;
+        return service({
+            method: 'patch',
             url: url,
             data: data
         })
