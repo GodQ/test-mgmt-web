@@ -9,3 +9,13 @@ export const updateData = (data) => {
     // console.log(query);
     return requests.patch('/api/test_result', data)
 }
+
+export const fetchTestrunList = (data) => {
+    // console.log(query);
+    return requests.get('/api/testrun_list', data)
+}
+
+export const fetchIndexList = (data) => {
+    // console.log(query);
+    return requests.get('/api/test_index_list', data)
+}

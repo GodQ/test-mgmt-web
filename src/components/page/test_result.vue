@@ -8,17 +8,17 @@
         <div class="container">
             <div class="handle-box">
                 Component:
-                <el-select v-model="select_component" placeholder="Select Component" class="handle-select mr10">
+                <el-select v-model="selected_index" placeholder="Select Component" class="handle-select mr10">
                     <!-- <el-option key="1" label="godq" value="godq"></el-option> -->
                     <el-option
-                        v-for="item in component_items"
+                        v-for="item in index_items"
                         :key="item.value"
                         :label="item.value"
                         :value="item.value">
                     </el-option>
                 </el-select>
                 TestRun:
-                <el-select v-model="select_testrun" placeholder="Select TestRun" class="handle-select mr10">
+                <el-select v-model="selected_testrun" placeholder="Select TestRun" class="handle-select mr10">
                     <!-- <el-option key="1" label="godq" value="godq"></el-option> -->
                     <el-option
                         v-for="item in testrun_items"
@@ -28,7 +28,7 @@
                     </el-option>
                 </el-select>
                 Keyword:
-                <el-input v-model="select_word" placeholder="search keyword" class="handle-input mr10"></el-input>
+                <el-input v-model="inputed_word" placeholder="search keyword" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="search">Search</el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="reload">Reload</el-button> 
             </div>
@@ -84,23 +84,24 @@
 </template>
 
 <script>
-    import { fetchData, updateData } from '../../api/data_provider';
+    import { fetchData, updateData, fetchTestrunList, fetchIndexList } from '../../api/data_provider';
     export default {
         name: 'test_result',
         data() {
             return {
                 tableData: [],
+                testrun_list: [],
                 view_data: [],
                 cur_page: 1,
-                page_size: 5,
+                page_size: 10,
                 total_num: 0,
                 view_num: 0,
-                component_items: [],
+                index_items: [],
                 testrun_items: [],
                 multipleSelection: [],
-                select_component: '',
-                select_testrun: '',
-                select_word: '',
+                selected_index: '',
+                selected_testrun: '',
+                inputed_word: '',
                 editVisible: false,
                 form: {
                     case_id: '',
@@ -113,6 +114,8 @@
         },
         created() {
             this.getData();
+            this.getTestrunList()
+            this.getIndexList()
         },
         computed: {
             data() {
@@ -132,30 +135,51 @@
                 let val = null
                 // 拷贝filters的值。
                 for (const i in filters) {
-                row = i // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
-                val = filters[i]
+                    row = i // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
+                    val = filters[i]
                 }
                 const filter = [{
-                row: row,
-                op: 'contains',
-                value: val
+                    row: row,
+                    op: 'contains',
+                    value: val
                 }]
                 console.log(filter)
             },
             // 获取 test result 数据
             getData() {
-                fetchData({page: this.cur_page}).then((res) => {
+                fetchData().then((res) => {
                     this.tableData = res.data.data;
                     this.total_num = this.tableData.length
                     this.view_data = this.tableData
                     this.view_num = this.total_num
-                    this.load_select_items()
+                    // this.load_select_items()
                 })
             },
-            load_select_items() {
+            getTestrunList() {
+                fetchTestrunList().then((res) => {
+                    var testruns = res.data.data
+                    this.testrun_items = new Array()
+                    for(var key of testruns){
+                        this.testrun_items.push({"key":key, "value":key})
+                    }
+                })
+            },
+            getIndexList() {
+                fetchIndexList().then((res) => {
+                    var indices = res.data.data
+                    this.index_items = new Array()
+                    for(var key of indices){
+                        this.index_items.push({"key":key, "value":key})
+                    }
+                    if(this.index_items.length===1){
+                        this.selected_index = this.index_items[0].value
+                }
+                })
+            },
+            load_select_items() {  //useless for now, this need fetch all data, it's too large
                 var testruns = {}
                 var components = {}
-                this.component_items = new Array()
+                this.index_items = new Array()
                 this.testrun_items = new Array()
                 for(let t of this.tableData) {
                     testruns[t.testrun_id] = t.testrun_id
@@ -165,21 +189,21 @@
                     this.testrun_items.push({"key":key, "value":testruns[key]})
                 }
                 for(var key in components){
-                    this.component_items.push({"key":key, "value":components[key]})
+                    this.index_items.push({"key":key, "value":components[key]})
                 }
-                if(this.component_items.length===1){
-                    this.select_component = this.component_items[0].value
+                if(this.index_items.length===1){
+                    this.selected_index = this.index_items[0].value
                 }
             },
             search() {
                 this.view_data = this.tableData.filter((d) => {
-                    // console.log(this.select_word)
+                    // console.log(this.inputed_word)
                     if (
-                        (this.select_component==='' || d.index===this.select_component) &&
-                        (this.select_testrun==='' || d.testrun_id===this.select_testrun) &&
-                        (d.case_name.indexOf(this.select_word) > -1 ||
-                            d.testrun_id.toString().indexOf(this.select_word) > -1 ||
-                            d.case_result.toString().indexOf(this.select_word)>-1 )
+                        (this.selected_index==='' || d.index===this.selected_index) &&
+                        (this.selected_testrun==='' || d.testrun_id===this.selected_testrun) &&
+                        (d.case_name.indexOf(this.inputed_word) > -1 ||
+                            d.testrun_id.toString().indexOf(this.inputed_word) > -1 ||
+                            d.case_result.toString().indexOf(this.inputed_word)>-1 )
                     ) {
                         return d;
                     }
@@ -188,8 +212,10 @@
             },
             reload() {
                 this.getData()
-                this.select_component = ""
-                this.select_testrun = ""
+                this.selected_index = ""
+                this.selected_testrun = ""
+                this.getTestrunList()
+                this.getIndexList()
             },
             formatter(row, column) {
                 return row.case_result;
