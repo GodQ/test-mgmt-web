@@ -32,7 +32,7 @@
                 <el-button type="primary" icon="el-icon-search" @click="search">Search</el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="reload">Reload</el-button> 
             </div>
-            <el-table :data="view_data.slice((cur_page-1) * page_size, cur_page * page_size)" 
+            <el-table :data="tableData.slice((cur_page-1) * page_size, cur_page * page_size)" 
               border class="table" ref="multipleTable" 
                 @selection-change="handleSelectionChange" 
                 @filter-change="handleFilterChange">
@@ -53,7 +53,7 @@
             </el-table>
             <div class="pagination">
                 <el-pagination background @current-change="handleCurrentChange" 
-                    :page-size="page_size" layout="prev, pager, next" :total="view_num">
+                    :page-size="page_size" layout="prev, pager, next" :total="total_num">
                 </el-pagination>
             </div>
         </div>
@@ -91,11 +91,9 @@
             return {
                 tableData: [],
                 testrun_list: [],
-                view_data: [],
                 cur_page: 1,
                 page_size: 10,
                 total_num: 0,
-                view_num: 0,
                 index_items: [],
                 testrun_items: [],
                 multipleSelection: [],
@@ -119,7 +117,7 @@
         },
         computed: {
             data() {
-                return this.view_data
+                return this.tableData
             }
         },
         methods: {
@@ -146,12 +144,10 @@
                 console.log(filter)
             },
             // 获取 test result 数据
-            getData() {
-                fetchData().then((res) => {
+            getData(params) {
+                fetchData(params).then((res) => {
                     this.tableData = res.data.data;
                     this.total_num = this.tableData.length
-                    this.view_data = this.tableData
-                    this.view_num = this.total_num
                     // this.load_select_items()
                 })
             },
@@ -173,7 +169,7 @@
                     }
                     if(this.index_items.length===1){
                         this.selected_index = this.index_items[0].value
-                }
+                    }
                 })
             },
             load_select_items() {  //useless for now, this need fetch all data, it's too large
@@ -196,19 +192,17 @@
                 }
             },
             search() {
-                this.view_data = this.tableData.filter((d) => {
-                    // console.log(this.inputed_word)
-                    if (
-                        (this.selected_index==='' || d.index===this.selected_index) &&
-                        (this.selected_testrun==='' || d.testrun_id===this.selected_testrun) &&
-                        (d.case_name.indexOf(this.inputed_word) > -1 ||
-                            d.testrun_id.toString().indexOf(this.inputed_word) > -1 ||
-                            d.case_result.toString().indexOf(this.inputed_word)>-1 )
-                    ) {
-                        return d;
-                    }
-                })
-                this.view_num = this.view_data.length
+                var params = {}
+                if(this.selected_index){
+                    params["index"] = this.selected_index
+                }
+                if(this.selected_testrun){
+                    params["testrun_id"] = this.selected_testrun
+                }
+                if(this.inputed_word){
+                    params["keyword"] = this.inputed_word
+                }
+                this.getData(params)
             },
             reload() {
                 this.getData()
@@ -250,10 +244,10 @@
                             break ;
                         }
                     }
-                    for(let i = 0; i < this.view_data.length; i++){
-                        if(this.view_data[i].case_id === this.form.case_id &&
-                            this.view_data[i].testrun_id === this.form.testrun_id){
-                            this.$set(this.view_data, i, this.form);
+                    for(let i = 0; i < this.tableData.length; i++){
+                        if(this.tableData[i].case_id === this.form.case_id &&
+                            this.tableData[i].testrun_id === this.form.testrun_id){
+                            this.$set(this.tableData, i, this.form);
                             break ;
                         }
                     }
