@@ -37,10 +37,7 @@
                 @selection-change="handleSelectionChange" 
                 @filter-change="handleFilterChange">
                 <el-table-column type="selection" width="55" column-key="selection" align="center"></el-table-column>
-                <el-table-column prop="testrun_id" label="TestRun id" column-key="testrun_id"
-                    <!-- :filters="[{text: '1', value: 1}, {text: '2', value: 2}]" 
-                    :filter-method="filterHandler" -->
-                    sortable>
+                <el-table-column prop="testrun_id" label="TestRun id" column-key="testrun_id" sortable>
                 </el-table-column>
                 <el-table-column prop="case_name" label="TestCase" column-key="case_name" sortable>
                 </el-table-column>
@@ -63,21 +60,18 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog title="Edit" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="50px">
-                <el-form-item label="TestCase id">
-                    <el-input v-model="form.case_id"></el-input>
+            <el-form ref="form" :model="form" label-width="100px">
+                <el-form-item label="TestCase">
+                    <el-input v-model="form.case_id" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="TestCase Name">
-                    <el-input v-model="form.case_name"></el-input>
-                </el-form-item>
-                <el-form-item label="Test Run id">
-                    <el-input v-model="form.testrun_id"></el-input>
+                <el-form-item label="TestRun id">
+                    <el-input v-model="form.testrun_id" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="Status">
-                    <el-input v-model="form.case_result"></el-input>
+                    <el-input v-model="form.case_result" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="comment">
-                    <el-input v-model="form.comment"></el-input>
+                    <el-input v-model="form.comment" type="textarea"></el-input>
                 </el-form-item>
 
             </el-form>
