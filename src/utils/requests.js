@@ -16,7 +16,7 @@ const service = axios.create({
 
 service.interceptors.response.use(response => {
     if(parseInt(response.status/100) === 2){
-        console.log(response.data)
+        // console.log(response.data)
         return response;
     }else{
         return Promise.reject();

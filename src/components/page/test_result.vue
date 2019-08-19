@@ -7,25 +7,48 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-button type="primary" icon="el-icon-lx-refresh" @click="reload">Reload</el-button> 
+                Component:
                 <el-select v-model="select_component" placeholder="Select Component" class="handle-select mr10">
-                    <el-option key="1" label="godq" value="godq"></el-option>
+                    <!-- <el-option key="1" label="godq" value="godq"></el-option> -->
+                    <el-option
+                        v-for="item in component_items"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.value">
+                    </el-option>
                 </el-select>
+                TestRun:
+                <el-select v-model="select_testrun" placeholder="Select TestRun" class="handle-select mr10">
+                    <!-- <el-option key="1" label="godq" value="godq"></el-option> -->
+                    <el-option
+                        v-for="item in testrun_items"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+                Keyword:
                 <el-input v-model="select_word" placeholder="search keyword" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="search">Search</el-button>
+                <el-button type="primary" icon="el-icon-lx-refresh" @click="reload">Reload</el-button> 
             </div>
             <el-table :data="view_data.slice((cur_page-1) * page_size, cur_page * page_size)" 
-              border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="testrun_id" label="TestRun id" sortable>
+              border class="table" ref="multipleTable" 
+                @selection-change="handleSelectionChange" 
+                @filter-change="handleFilterChange">
+                <el-table-column type="selection" width="55" column-key="selection" align="center"></el-table-column>
+                <el-table-column prop="testrun_id" label="TestRun id" column-key="testrun_id"
+                    <!-- :filters="[{text: '1', value: 1}, {text: '2', value: 2}]" 
+                    :filter-method="filterHandler" -->
+                    sortable>
                 </el-table-column>
-                <el-table-column prop="case_name" label="TestCase" sortable>
+                <el-table-column prop="case_name" label="TestCase" column-key="case_name" sortable>
                 </el-table-column>
-                <el-table-column prop="case_result" label="Status" sortable>
+                <el-table-column prop="case_result" label="Status" column-key="case_result" sortable>
                 </el-table-column>
-                <el-table-column prop="comment" label="Comment">
+                <el-table-column prop="comment" label="Comment" column-key="comment">
                 </el-table-column>
-                <el-table-column label="Actions" width="180" align="center">
+                <el-table-column label="Actions" width="180" align="center" column-key="Actions">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
                     </template>
@@ -78,8 +101,11 @@
                 page_size: 5,
                 total_num: 0,
                 view_num: 0,
+                component_items: [],
+                testrun_items: [],
                 multipleSelection: [],
                 select_component: '',
+                select_testrun: '',
                 select_word: '',
                 editVisible: false,
                 form: {
@@ -105,6 +131,23 @@
                 this.cur_page = val;
                 // this.getData();
             },
+            handleFilterChange(filters) {
+                console.log('筛选条件发生变化')
+                console.log(filters)
+                let row = null
+                let val = null
+                // 拷贝filters的值。
+                for (const i in filters) {
+                row = i // 保存 column-key的值，如果事先没有为column-key赋值，系统会自动生成一个唯一且恒定的名称
+                val = filters[i]
+                }
+                const filter = [{
+                row: row,
+                op: 'contains',
+                value: val
+                }]
+                console.log(filter)
+            },
             // 获取 test result 数据
             getData() {
                 fetchData({page: this.cur_page}).then((res) => {
@@ -112,13 +155,34 @@
                     this.total_num = this.tableData.length
                     this.view_data = this.tableData
                     this.view_num = this.total_num
+                    this.load_select_items()
                 })
+            },
+            load_select_items() {
+                var testruns = {}
+                var components = {}
+                this.component_items = new Array()
+                this.testrun_items = new Array()
+                for(let t of this.tableData) {
+                    testruns[t.testrun_id] = t.testrun_id
+                    components[t.index] = t.index
+                }
+                for(var key in testruns){
+                    this.testrun_items.push({"key":key, "value":testruns[key]})
+                }
+                for(var key in components){
+                    this.component_items.push({"key":key, "value":components[key]})
+                }
+                if(this.component_items.length===1){
+                    this.select_component = this.component_items[0].value
+                }
             },
             search() {
                 this.view_data = this.tableData.filter((d) => {
-                    console.log(this.select_word)
+                    // console.log(this.select_word)
                     if (
                         (this.select_component==='' || d.index===this.select_component) &&
+                        (this.select_testrun==='' || d.testrun_id===this.select_testrun) &&
                         (d.case_name.indexOf(this.select_word) > -1 ||
                             d.testrun_id.toString().indexOf(this.select_word) > -1 ||
                             d.case_result.toString().indexOf(this.select_word)>-1 )
@@ -130,12 +194,15 @@
             },
             reload() {
                 this.getData()
+                this.select_component = ""
+                this.select_testrun = ""
             },
             formatter(row, column) {
                 return row.case_result;
             },
-            filterTag(value, row) {
-                return row.tag === value;
+            filterHandler(value, row, column) {
+                const property = column['property'];
+                return row[property] === value;
             },
             handleEdit(index, row) {
                 // this.form = {
@@ -155,7 +222,7 @@
             saveEdit() {
                 this.editVisible = false;
                 updateData(this.form).then((res) => {
-                    console.log(res)
+                    // console.log(res)
                     for(let i = 0; i < this.tableData.length; i++){
                         if(this.tableData[i].case_id === this.form.case_id &&
                             this.tableData[i].testrun_id === this.form.testrun_id){
