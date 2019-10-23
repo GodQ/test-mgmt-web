@@ -12,10 +12,10 @@ export const updateData = (data) => {
 
 export const fetchTestrunList = (data) => {
     // console.log(query);
-    return requests.get('/api/testrun_list', data)
+    return requests.get('/api/testrun', data)
 }
 
 export const fetchIndexList = (data) => {
     // console.log(query);
-    return requests.get('/api/test_index_list', data)
+    return requests.get('/api/test_index', data)
 }
