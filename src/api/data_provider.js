@@ -1,5 +1,10 @@
 import requests from '../utils/requests';
 
+export const fetchSummary = (data) => {
+    // console.log(query);
+    return requests.get('/api/summary', data)
+}
+
 export const fetchData = (query) => {
     // console.log(query);
     return requests.get('/api/test_result', query)
@@ -12,7 +17,7 @@ export const updateData = (data) => {
 
 export const fetchTestrunList = (data) => {
     // console.log(query);
-    return requests.get('/api/testrun', data)
+    return requests.get('/api/testruns', data)
 }
 
 export const fetchIndexList = (data) => {

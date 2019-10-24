@@ -110,9 +110,14 @@
                 }
             }
         },
+        watch: {
+            "selected_index": function (value) {
+                this.getTestrunList()
+            },
+        },
         created() {
             this.getData();
-            this.getTestrunList()
+            // this.getTestrunList()
             this.getIndexList()
         },
         computed: {
@@ -152,7 +157,13 @@
                 })
             },
             getTestrunList() {
-                fetchTestrunList().then((res) => {
+                if(!this.selected_index)
+                    return
+                var params = {
+                    'index':this.selected_index,
+                    'id_only': 'true'
+                }
+                fetchTestrunList(params).then((res) => {
                     var testruns = res.data.data
                     this.testrun_items = new Array()
                     for(var key of testruns){
@@ -170,6 +181,7 @@
                     if(this.index_items.length===1){
                         this.selected_index = this.index_items[0].value
                     }
+                    // this.getTestrunList()
                 })
             },
             load_select_items() {  //useless for now, this need fetch all data, it's too large
@@ -205,11 +217,12 @@
                 this.getData(params)
             },
             reload() {
-                this.getData()
+                // this.getData()
                 this.selected_index = ""
                 this.selected_testrun = ""
-                this.getTestrunList()
+                // this.getTestrunList()
                 this.getIndexList()
+                this.search()
             },
             formatter(row, column) {
                 return row.case_result;
