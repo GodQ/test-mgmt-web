@@ -1,0 +1,15 @@
+
+1. Install nodejs
+curl --silent --location https://rpm.nodesource.com/setup_12.x | bash -
+yum install -y nodejs
+npm -v
+
+2. Install requirements
+npm install
+
+3. run project
+npm run serve
+view url http://localhost:8080
+
+4. build project in dist
+npm run build
