@@ -1,4 +1,4 @@
-# Test Management Web is based on the vue-manage-system #
+# Test Management Web #
 
 
 
@@ -19,7 +19,7 @@
   </a>
   
   
-vue-manage-system
+based on the vue-manage-system
 https://github.com/lin-xin/vue-manage-system  
 
 基于Vue.js + Element UI 的后台管理系统解决方案。[线上地址](http://blog.gdfengshuo.com/example/work/)
