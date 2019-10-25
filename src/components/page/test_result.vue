@@ -112,6 +112,7 @@
         },
         watch: {
             "selected_index": function (value) {
+                this.selected_testrun = null
                 this.getTestrunList()
             },
         },

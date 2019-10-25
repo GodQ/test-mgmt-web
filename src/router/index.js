@@ -12,12 +12,12 @@ export default new Router({
         {
             path: '/',
             component: resolve => require(['../components/common/Home.vue'], resolve),
-            meta: { title: '自述文件' },
+            meta: { title: 'Home' },
             children:[
                 {
                     path: '/dashboard',
                     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
-                    meta: { title: '系统首页' }
+                    meta: { title: 'Dashboard' }
                 },
                 {
                     path: '/icon',
@@ -37,7 +37,7 @@ export default new Router({
                 {
                     path: '/tabs',
                     component: resolve => require(['../components/page/Tabs.vue'], resolve),
-                    meta: { title: 'tab选项卡' }
+                    meta: { title: 'Messages' }
                 },
                 {
                     path: '/form',

@@ -41,7 +41,7 @@
                     {
                         icon: 'el-icon-lx-home',
                         index: 'dashboard',
-                        title: '系统首页'
+                        title: 'Dashboard'
                     },
                     {
                         icon: 'el-icon-lx-cascades',
