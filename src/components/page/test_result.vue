@@ -43,6 +43,8 @@
                 </el-table-column>
                 <el-table-column prop="case_result" label="case_result" column-key="case_result" sortable>
                 </el-table-column>
+                <el-table-column prop="bugs" label="bugs" column-key="bugs">
+                </el-table-column>
                 <el-table-column prop="comment" label="comment" column-key="comment">
                 </el-table-column>
                 <el-table-column label="Actions" width="180" align="center" column-key="Actions">
@@ -70,7 +72,10 @@
                 <el-form-item label="Status">
                     <el-input v-model="form.case_result" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="comment">
+                <el-form-item label="Bugs">
+                    <el-input v-model="form.bugs" type="textarea"></el-input>
+                </el-form-item>
+                <el-form-item label="Comment">
                     <el-input v-model="form.comment" type="textarea"></el-input>
                 </el-form-item>
 
@@ -103,9 +108,9 @@
                 editVisible: false,
                 form: {
                     case_id: '',
-                    case_name: '',
                     testrun_id: '',
                     case_result: '',
+                    bugs: '',
                     comment: ''
                 }
             }
@@ -233,13 +238,6 @@
                 return row[property] === value;
             },
             handleEdit(index, row) {
-                // this.form = {
-                //     case_id: row.case_id,
-                //     case_name: row.case_name,
-                //     testrun_id: row.testrun_id,
-                //     case_result: row.case_result,
-                //     comment: row.comment
-                // }
                 this.form = JSON.parse(JSON.stringify(row))
                 this.editVisible = true;
             },
