@@ -10,6 +10,11 @@ export const fetchData = (query) => {
     return requests.get('/api/test_result', query)
 }
 
+export const fetchDetails = (query) => {
+    // console.log(query);
+    return requests.get('/api/test_result', query)
+}
+
 export const updateData = (data) => {
     // console.log(query);
     return requests.patch('/api/test_result', data)

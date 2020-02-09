@@ -49,6 +49,7 @@
                 </el-table-column>
                 <el-table-column label="Actions" width="180" align="center" column-key="Actions">
                     <template slot-scope="scope">
+                        <el-button type="text" icon="el-icon-edit" @click="handleDetails(scope.$index, scope.row)">Details</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
                     </template>
                 </el-table-column>
@@ -73,7 +74,7 @@
                     <el-input v-model="form.case_result" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="Bugs">
-                    <el-input v-model="form.bugs" type="textarea"></el-input>
+                    <el-input v-model="form.bugs"></el-input>
                 </el-form-item>
                 <el-form-item label="Comment">
                     <el-input v-model="form.comment" type="textarea"></el-input>
@@ -85,11 +86,42 @@
                 <el-button type="primary" @click="saveEdit">Submit</el-button>
             </span>
         </el-dialog>
+
+        <!-- 详细信息弹出框 -->
+        <el-dialog title="Details" :visible.sync="detailsVisible" width="60%">
+            <el-form ref="details" :model="details" label-width="100px">
+                <el-form-item label="TestCase id">
+                    <el-input v-model="details.case_id" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="TestRun id">
+                    <el-input v-model="details.testrun_id" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="Env">
+                    <el-input v-model="details.env" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="Status">
+                    <el-input v-model="details.case_result" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="Bugs">
+                    <el-input v-model="details.bugs" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="Comment">
+                    <el-input v-model="details.comment" type="textarea" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="stdout">
+                    <el-input v-model="details.stdout" type="textarea" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="Traceback">
+                    <el-input v-model="details.traceback" type="textarea" :disabled="true"></el-input>
+                </el-form-item>
+
+            </el-form>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import { fetchData, updateData, fetchTestrunList, fetchIndexList } from '../../api/data_provider';
+    import { fetchData, fetchDetails, updateData, fetchTestrunList, fetchIndexList } from '../../api/data_provider';
     export default {
         name: 'test_result',
         data() {
@@ -106,12 +138,23 @@
                 selected_testrun: '',
                 inputed_word: '',
                 editVisible: false,
+                detailsVisible: false,
                 form: {
                     case_id: '',
                     testrun_id: '',
                     case_result: '',
                     bugs: '',
                     comment: ''
+                },
+                details: {
+                    case_id: '',
+                    testrun_id: '',
+                    case_result: '',
+                    bugs: '',
+                    comment: '',
+                    env: '',
+                    stdout: '',
+                    traceback: ''
                 }
             }
         },
@@ -240,6 +283,20 @@
             handleEdit(index, row) {
                 this.form = JSON.parse(JSON.stringify(row))
                 this.editVisible = true;
+            },
+            handleDetails(index, row) {
+                // this.form = JSON.parse(JSON.stringify(row))
+                var params = {}
+                if(this.selected_index){
+                    params["index"] = this.selected_index
+                }
+                params["testrun_id"] = row['testrun_id']
+                params["case_id"] = row['case_id']
+                params["details"] = true
+                fetchDetails(params).then((res) => {
+                    this.details = res.data.data[0];
+                })
+                this.detailsVisible = true;
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
