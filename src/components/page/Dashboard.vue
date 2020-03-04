@@ -183,6 +183,7 @@
         methods: {
             get_summary(){
                 fetchSummary().then((res) => {
+                    console.log(res.data)
                     this.total = res.data.total;
                     this.index_count = res.data.index_count;
                     this.testrun_count = res.data.testrun_count;
