@@ -23,6 +23,7 @@
 </template>
 
 <script>
+    import { getToken, useToken} from '../../api/auth';
     export default {
         data: function(){
             return {
@@ -44,10 +45,29 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        localStorage.setItem('ms_username',this.ruleForm.username);
-                        this.$router.push('/');
+                        console.log('111')
+                        getToken(this.ruleForm.username, this.ruleForm.password).then((res) => {
+                            // console.log(res.data)
+                            var status = res.status
+                            if (status != 201) {
+                                alert("Login Failed!!!")
+                                return false
+                            }
+                            var token = res.data.token
+                            console.log("Get token: "+token)
+                            useToken(token)
+                            localStorage.setItem('ms_username',this.ruleForm.username);
+                            this.$router.push('/');
+                            return true
+                        }
+                        ).catch(err => {
+                            alert("Login Failed!!! \n"+err)
+                            return false
+                        })
+                        // localStorage.setItem('ms_username',this.ruleForm.username);
+                        // this.$router.push('/');
                     } else {
-                        console.log('error submit!!');
+                        console.error('error submit!!');
                         return false;
                     }
                 });
