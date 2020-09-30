@@ -32,7 +32,7 @@
                 <el-button type="primary" icon="el-icon-search" @click="search">Search</el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="reload">Reload</el-button> 
             </div>
-            <el-table :data="tableData.slice((cur_page-1) * page_size, cur_page * page_size)" 
+            <el-table :data="tableData" 
               border class="table" ref="multipleTable" 
                 @selection-change="handleSelectionChange" 
                 @filter-change="handleFilterChange">
@@ -55,8 +55,13 @@
                 </el-table-column>
             </el-table>
             <div class="pagination">
-                <el-pagination background @current-change="handleCurrentChange" 
-                    :page-size="page_size" layout="prev, pager, next" :total="total_num">
+                <el-pagination background 
+                    layout="total, sizes, prev, pager, next, jumper" 
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange" 
+                    :current-page="cur_page" 
+                    :page-size="page_size" 
+                    :total="total_num">
                 </el-pagination>
             </div>
         </div>
@@ -175,11 +180,6 @@
             }
         },
         methods: {
-            // 分页导航
-            handleCurrentChange(val) {
-                this.cur_page = val;
-                // this.getData();
-            },
             handleFilterChange(filters) {
                 console.log('筛选条件发生变化')
                 console.log(filters)
@@ -201,7 +201,9 @@
             getData(params) {
                 fetchData(params).then((res) => {
                     this.tableData = res.data.data;
-                    this.total_num = this.tableData.length
+                    this.total_num = res.data.page_info.total
+                    // console.info(this.tableData)
+                    // console.info(this.total_num)
                     // this.load_select_items()
                 })
             },
@@ -253,6 +255,7 @@
                 }
             },
             search() {
+                this.cur_page = 1;
                 var params = {}
                 if(this.selected_index){
                     params["index"] = this.selected_index
@@ -263,6 +266,44 @@
                 if(this.inputed_word){
                     params["keyword"] = this.inputed_word
                 }
+                this.getData(params)
+            },
+            handleCurrentChange(val) {
+                this.cur_page = val;
+                var params = {}
+                params["limit"] = this.page_size
+                if(this.cur_page){
+                    params["offset"] = (this.cur_page-1) * this.page_size
+                }
+                if(this.selected_index){
+                    params["index"] = this.selected_index
+                }
+                if(this.selected_testrun){
+                    params["testrun_id"] = this.selected_testrun
+                }
+                if(this.inputed_word){
+                    params["keyword"] = this.inputed_word
+                }
+                console.info(params)
+                this.getData(params)
+            },
+            handleSizeChange(val) {
+                this.page_size = val;
+                var params = {}
+                params["limit"] = this.page_size
+                if(this.cur_page){
+                    params["offset"] = (this.cur_page-1) * this.page_size
+                }
+                if(this.selected_index){
+                    params["index"] = this.selected_index
+                }
+                if(this.selected_testrun){
+                    params["testrun_id"] = this.selected_testrun
+                }
+                if(this.inputed_word){
+                    params["keyword"] = this.inputed_word
+                }
+                console.info(params)
                 this.getData(params)
             },
             reload() {
