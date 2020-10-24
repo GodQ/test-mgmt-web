@@ -47,6 +47,28 @@
       <el-divider><i class="el-icon-bottom"></i></el-divider>
 
       <div>
+          Test Run Result Summary:
+          <el-table :data="testrun_summary" 
+              border class="table" ref="multipleTable" >
+                <el-table-column prop="testrun_id" label="testrun_id" column-key="testrun_id" sortable>
+                </el-table-column>
+                <el-table-column prop="case_count" label="case_count" column-key="case_count" sortable>
+                </el-table-column>
+                <el-table-column prop="success_rate" label="success_rate" column-key="success_rate" sortable>
+                </el-table-column>
+                <el-table-column prop="error" label="error" column-key="error">
+                </el-table-column>
+                <el-table-column prop="failure" label="failure" column-key="failure">
+                </el-table-column>
+                <el-table-column prop="success" label="success" column-key="success">
+                </el-table-column>
+                
+            </el-table>
+      </div>
+
+      <el-divider><i class="el-icon-bottom"></i></el-divider>
+
+      <div>
         Diff Analysis Result:
         <el-main>
           <el-table :data="tableData" border class="table" ref="multipleTable" >
@@ -137,6 +159,16 @@ export default {
         },
       ],
       selected_testrun_list: [],
+      testrun_summary: [
+          {
+                "case_count": '',
+                "error": '',
+                "failure": '',
+                "success": '',
+                "success_rate": '',
+                "testrun_id": "testrun_id"
+            }
+      ],
       testrun_list: [],
       index_items: [],
       testrun_items: [],
@@ -183,7 +215,12 @@ export default {
             prop: "results[" + i + "].result",
           });
         }
-        // console.info(this.tableData)
+        var testrun_summary = res.data.summary;
+        this.testrun_summary = Array();
+        for (var i = 0; i < testruns.length; i++) {
+          this.testrun_summary.push(testrun_summary[i]);
+        }
+        // console.info(this.testrun_summary)
         // console.info(this.total_num)
         // this.load_select_items()
       });
