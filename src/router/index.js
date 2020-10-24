@@ -25,6 +25,11 @@ export default new Router({
                     meta: { title: 'Test Result' }
                 },
                 {
+                    path: '/test_result_diff',
+                    component: resolve => require(['../components/page/test_result_diff.vue'], resolve),
+                    meta: { title: 'Test Result Diff' }
+                },
+                {
                     path: '/tabs',
                     component: resolve => require(['../components/page/Tabs.vue'], resolve),
                     meta: { title: 'Messages' }

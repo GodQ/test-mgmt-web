@@ -10,6 +10,11 @@ export const fetchData = (query) => {
     return requests.get('/api/test_result', query)
 }
 
+export const fetchDiffData = (query) => {
+    // console.log(query);
+    return requests.get('/api/test_result_diff', query)
+}
+
 export const fetchDetails = (query) => {
     // console.log(query);
     return requests.get('/api/test_result', query)

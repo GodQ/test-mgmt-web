@@ -48,6 +48,11 @@
                         index: 'test_result',
                         title: 'Test Result'
                     },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'test_result_diff',
+                        title: 'Test Result Diff'
+                    },
                     // {
                     //     icon: 'el-icon-lx-cascades',
                     //     index: 'table',
