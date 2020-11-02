@@ -169,6 +169,10 @@
             },
         },
         created(){
+            if(localStorage.getItem('ms_username')==null){
+                this.$router.push('/login');
+            }
+
             this.handleListener();
             this.get_summary();
             this.getIndexList();
