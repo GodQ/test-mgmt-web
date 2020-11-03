@@ -4,6 +4,7 @@ import router from './router'
 import axios from 'axios';
 import ElementUI from 'element-ui';
 import VueI18n from 'vue-i18n';
+import  * as locale from 'element-ui/lib/locale/lang/en'
 import { messages } from './components/common/i18n';
 import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
 // import '../static/css/theme-green/index.css';       // 浅绿色主题
@@ -14,12 +15,13 @@ import "babel-polyfill";
 Vue.config.productionTip = false
 Vue.use(VueI18n);
 Vue.use(ElementUI, {
+    locale,
     size: 'small'
 });
 Vue.prototype.$axios = axios;
 
 const i18n = new VueI18n({
-    locale: 'zh',
+    locale: 'en',
     messages
 })
 

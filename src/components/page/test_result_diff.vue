@@ -301,7 +301,21 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+.el-transfer-panel {
+    border: 1px solid #EBEEF5;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #FFF;
+    display: inline-block;
+    vertical-align: middle;
+    width: 300px;
+    max-height: 100%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    position: relative;
+}
+
 .handle-box {
   margin-bottom: 20px;
 }
