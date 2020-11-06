@@ -45,7 +45,7 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        console.log('111')
+                        console.log(this.ruleForm)
                         getToken(this.ruleForm.username, this.ruleForm.password).then((res) => {
                             // console.log(res.data)
                             var status = res.status
@@ -56,7 +56,8 @@
                             var token = res.data.token
                             console.log("Get token: "+token)
                             useToken(token)
-                            localStorage.setItem('ms_username',this.ruleForm.username);
+                            localStorage.setItem('ms_username',res.data.user_name);
+                            localStorage.setItem('ms_user_role',res.data.role);
                             this.$router.push('/');
                             return true
                         }

@@ -53,11 +53,11 @@
                         index: 'test_result_diff',
                         title: 'Test Result Diff'
                     },
-                    // {
-                    //     icon: 'el-icon-lx-cascades',
-                    //     index: 'table',
-                    //     title: '基础表格'
-                    // },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'user_management',
+                        title: 'User Management'
+                    },
                     // {
                     //     icon: 'el-icon-lx-copy',
                     //     index: 'tabs',

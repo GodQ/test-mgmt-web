@@ -30,6 +30,11 @@ export default new Router({
                     meta: { title: 'Test Result Diff' }
                 },
                 {
+                    path: '/user_management',
+                    component: resolve => require(['../components/page/user_management.vue'], resolve),
+                    meta: { title: 'User Management', permission: 'admin' }
+                },
+                {
                     path: '/tabs',
                     component: resolve => require(['../components/page/Tabs.vue'], resolve),
                     meta: { title: 'Messages' }

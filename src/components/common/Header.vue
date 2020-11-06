@@ -36,7 +36,7 @@
                         <a href="https://github.com/GodQ/test-mgmt-web" target="_blank">
                             <el-dropdown-item>Git Repo</el-dropdown-item>
                         </a>
-                        <el-dropdown-item divided  command="loginout">Log Out</el-dropdown-item>
+                        <el-dropdown-item divided  command="logout">Log Out</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
@@ -45,6 +45,7 @@
 </template>
 <script>
     import bus from '../common/bus';
+    import {useToken} from '../../api/auth';
     export default {
         data() {
             return {
@@ -63,8 +64,10 @@
         methods:{
             // 用户名下拉菜单选择事件
             handleCommand(command) {
-                if(command == 'loginout'){
+                if(command == 'logout'){
                     localStorage.removeItem('ms_username')
+                    localStorage.removeItem('ms_user_role')
+                    useToken('')
                     this.$router.push('/login');
                 }
             },

@@ -6,7 +6,8 @@ const service = axios.create({
     // baseURL: 'https://www.easy-mock.com/mock/5d557cd43648ff2af04ca991/test-mgmt',
     timeout: 5000,
     headers: {
-        Accept: 'application/json;charset=UTF-8'
+        'Accept': 'application/json;charset=UTF-8',
+        'Content-Type': 'application/json'
     }
 })
 
@@ -17,17 +18,17 @@ const service = axios.create({
 //     return Promise.reject();
 // })
 
-service.interceptors.response.use(response => {
-    if(parseInt(response.status/100) === 2){
-        // console.log(response.data)
-        return response;
-    }else{
-        return Promise.reject();
-    }
-}, error => {
-    console.log(error);
-    return Promise.reject();
-})
+// service.interceptors.response.use(response => {
+//     if(parseInt(response.status/100) === 2){
+//         // console.log(response.data)
+//         return response;
+//     }else{
+//         return Promise.reject();
+//     }
+// }, error => {
+//     console.log(error);
+//     return Promise.reject();
+// })
 
 export default {
     get_service() {
@@ -59,7 +60,8 @@ export default {
         return service({
             method: 'post',
             url: url,
-            data: qs.stringify(data),
+            // data: qs.stringify(data),
+            data: data
         })
     },
     put(url, data) {
