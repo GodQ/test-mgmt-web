@@ -84,6 +84,7 @@
               :key="index"
               :prop="item.prop"
               :label="item.col"
+              sortable
             >
             </el-table-column>
           </el-table>
