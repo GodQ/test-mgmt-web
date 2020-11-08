@@ -98,7 +98,7 @@
                 tableData: [],
                 editVisible: false,
                 addVisible: false,
-                role_set: ["admin", "user"],
+                role_set: ["admin", "user", 'viewer'],
                 form: {
                     user_name: '',
                     password: '',
@@ -134,7 +134,10 @@
                     }).catch(function (error) {
                     console.error(error)
                     if (error.response) {
-                        alert(error.response.data.error)
+                        if (error.response.data.error)
+                            alert(error.response.data.error)
+                        else
+                            alert(error.response.data)
                     }
                     else{
                         alert(error.message)
@@ -157,7 +160,10 @@
                 }).catch(function (error) {
                     console.error(error)
                     if (error.response) {
-                        alert(error.response.data.error)
+                        if (error.response.data.error)
+                            alert(error.response.data.error)
+                        else
+                            alert(error.response.data)
                     }
                     else{
                         alert(error.message)
@@ -179,7 +185,10 @@
                 }).catch(function (error) {
                     console.error(error)
                     if (error.response) {
-                        alert(error.response.data.error)
+                        if (error.response.data.error)
+                            alert(error.response.data.error)
+                        else
+                            alert(error.response.data)
                     }
                     else{
                         alert(error.message)

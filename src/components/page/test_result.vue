@@ -362,7 +362,18 @@
                         }
                     }
                     this.$message.success(`Save successfully`);
-                }).catch((e) => {});
+                }).catch(function (error) {
+                    console.error(error)
+                    if (error.response) {
+                        if (error.response.data.error)
+                            alert(error.response.data.error)
+                        else
+                            alert(error.response.data)
+                    }
+                    else{
+                        alert(error.message)
+                    }
+                });
             }
         }
     }
