@@ -101,7 +101,7 @@
         name: 'dashboard',
         data() {
             return {
-                name: localStorage.getItem('ms_username'),
+                name: sessionStorage.getItem('auth.user_name'),
                 total: null,
                 index_count: null,
                 testrun_count: null,
@@ -169,7 +169,7 @@
             },
         },
         created(){
-            if(localStorage.getItem('ms_username')==null){
+            if(sessionStorage.getItem('auth.user_name')==null){
                 this.$router.push('/login');
             }
 

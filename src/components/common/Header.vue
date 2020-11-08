@@ -57,7 +57,7 @@
         },
         computed:{
             username(){
-                let username = localStorage.getItem('ms_username');
+                let username = sessionStorage.getItem('auth.user_name');
                 return username ? username : this.name;
             }
         },
@@ -65,8 +65,8 @@
             // 用户名下拉菜单选择事件
             handleCommand(command) {
                 if(command == 'logout'){
-                    localStorage.removeItem('ms_username')
-                    localStorage.removeItem('ms_user_role')
+                    sessionStorage.removeItem('auth.user_name')
+                    sessionStorage.removeItem('auth.user_role')
                     useToken('')
                     this.$router.push('/login');
                 }
