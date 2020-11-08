@@ -36,7 +36,15 @@
                     <el-input v-model="form.password" :disabled="false"></el-input>
                 </el-form-item>
                 <el-form-item label="Role">
-                    <el-input v-model="form.role" :disabled="false"></el-input>
+                    <!-- <el-input v-model="form.role" :disabled="false"></el-input> -->
+                    <el-select v-model="form.role" placeholder="User Role">
+                        <el-option
+                            v-for="item in role_set"
+                            :key="item"
+                            :label="item"
+                            :value="item">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
 
             </el-form>
@@ -56,7 +64,15 @@
                     <el-input v-model="form.password" :disabled="false"></el-input>
                 </el-form-item>
                 <el-form-item label="Role">
-                    <el-input v-model="form.role" :disabled="false"></el-input>
+                    <!-- <el-input v-model="form.role" :disabled="false"></el-input> -->
+                    <el-select v-model="form.role" placeholder="User Role">
+                        <el-option
+                            v-for="item in role_set"
+                            :key="item"
+                            :label="item"
+                            :value="item">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
 
             </el-form>
@@ -82,6 +98,7 @@
                 tableData: [],
                 editVisible: false,
                 addVisible: false,
+                role_set: ["admin", "user"],
                 form: {
                     user_name: '',
                     password: '',

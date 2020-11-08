@@ -6,7 +6,7 @@
                     <div class="user-info">
                         <img src="../../assets/img/img.jpg" class="user-avator" alt="">
                         <div class="user-info-cont">
-                            <div class="user-info-name">{{name}}</div>
+                            <div class="user-info-name">{{user_name}}</div>
                             <div>{{role}}</div>
                         </div>
                     </div>
@@ -101,7 +101,8 @@
         name: 'dashboard',
         data() {
             return {
-                name: sessionStorage.getItem('auth.user_name'),
+                user_name: sessionStorage.getItem('auth.user_name'),
+                user_role: sessionStorage.getItem('auth.user_role'),
                 total: null,
                 index_count: null,
                 testrun_count: null,
@@ -115,26 +116,6 @@
                     // {
                     //     name: '2018/09/05',
                     //     value: 941
-                    // },
-                    // {
-                    //     name: '2018/09/06',
-                    //     value: 1139
-                    // },
-                    // {
-                    //     name: '2018/09/07',
-                    //     value: 816
-                    // },
-                    // {
-                    //     name: '2018/09/08',
-                    //     value: 327
-                    // },
-                    // {
-                    //     name: '2018/09/09',
-                    //     value: 228
-                    // },
-                    // {
-                    //     name: '2018/09/10',
-                    //     value: 1065
                     // }
                 ],
                 options: {
@@ -160,7 +141,7 @@
         },
         computed: {
             role() {
-                return this.name === 'admin' ? 'Administrator' : 'User';
+                return this.user_role === 'admin' ? 'Administrator' : 'User';
             }
         },
         watch: {
