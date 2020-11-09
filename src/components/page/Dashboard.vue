@@ -143,8 +143,8 @@
             role() {
                 if (this.user_role === 'admin')
                     return 'Administrator'
-                else if (this.user_role === 'user')
-                    return 'Common User'
+                else if (this.user_role === 'developer')
+                    return 'QE && Developer'
                 else if (this.user_role === 'viewer')
                     return 'Viewer'
                 else 

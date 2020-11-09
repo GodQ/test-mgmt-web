@@ -19,8 +19,8 @@
                 </el-table-column>
                 <el-table-column label="Actions" width="180" align="center" column-key="Actions">
                     <template slot-scope="scope">
-                        <el-button type="text" icon="el-icon-delete" @click="handleUserDelete(scope.$index, scope.row)">Delete</el-button>
                         <el-button type="text" icon="el-icon-edit" @click="handleUserEdit(scope.$index, scope.row)">Edit</el-button>
+                        <el-button type="text" icon="el-icon-delete" @click="handleUserDelete(scope.$index, scope.row)">Delete</el-button>
                     </template>
                 </el-table-column>
             </el-table>

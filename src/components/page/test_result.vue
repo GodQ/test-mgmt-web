@@ -50,7 +50,9 @@
                 <el-table-column label="Actions" width="180" align="center" column-key="Actions">
                     <template slot-scope="scope">
                         <el-button type="text" icon="el-icon-edit" @click="handleDetails(scope.$index, scope.row)">Details</el-button>
-                        <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+                        <el-button type="text" icon="el-icon-edit" 
+                            :disabled="edit_disabled" 
+                            @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -88,7 +90,9 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">Cancel</el-button>
-                <el-button type="primary" @click="saveEdit">Submit</el-button>
+                <el-button type="primary" @click="saveEdit"
+                    :disabled="edit_disabled" 
+                >Submit</el-button>
             </span>
         </el-dialog>
 
@@ -142,6 +146,7 @@
                 selected_index: '',
                 selected_testrun: '',
                 inputed_word: '',
+                edit_disabled: true,
                 editVisible: false,
                 detailsVisible: false,
                 form: {
@@ -172,7 +177,13 @@
         created() {
             this.getData();
             // this.getTestrunList()
-            this.getIndexList()
+            this.getIndexList();
+            console.log(sessionStorage.getItem('auth.user_role'))
+            if(sessionStorage.getItem('auth.user_role')=='viewer'){
+                this.edit_disabled = true
+            }
+            else
+                this.edit_disabled = false
         },
         computed: {
             data() {

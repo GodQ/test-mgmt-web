@@ -56,7 +56,8 @@
                     {
                         icon: 'el-icon-lx-cascades',
                         index: 'user_management',
-                        title: 'User Management'
+                        title: 'User Management',
+                        role: 'admin'
                     },
                     // {
                     //     icon: 'el-icon-lx-copy',
@@ -156,6 +157,21 @@
             bus.$on('collapse', msg => {
                 this.collapse = msg;
             })
+            this.check_role()
+        },
+        methods: {
+            check_role(){
+                let user_role = sessionStorage.getItem('auth.user_role')
+                var r = []
+                for(let i = 0; i < this.items.length; i++){
+                    let item_role = this.items[i].role
+                    if(! item_role)
+                        r.push(this.items[i])
+                    else if(item_role === user_role)
+                        r.push(this.items[i])
+                }
+                this.items = r
+            }
         }
     }
 </script>
