@@ -1,0 +1,13 @@
+[Unit]
+Description=Test Management System
+StartLimitIntervalSec=30
+StartLimitBurst=3
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/npm run serve
+Restart=always
+WorkingDirectory=/root/test-mgmt/test-mgmt-web
+
+[Install]
+WantedBy=multi-user.target
