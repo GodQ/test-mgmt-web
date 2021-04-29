@@ -130,7 +130,7 @@
 </template>
 
 <script>
-    import { fetchData, fetchDetails, updateData, fetchTestrunList, fetchIndexList } from '../../api/data_provider';
+    import { fetchData, fetchDetails, updateData, fetchTestrunList, fetchIndexList } from '../../api/data_provider_for_test_result';
     export default {
         name: 'test_result',
         data() {

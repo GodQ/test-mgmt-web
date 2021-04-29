@@ -35,16 +35,19 @@ export default {
         return service
     },
 
-    set_auth_header(token) {
-        service.defaults.headers.common['Authorization'] = 'Bearer '+token;
-    },
+    // set_auth_header(token) {
+    //     service.defaults.headers.common['Authorization'] = 'Bearer '+token;
+    // },
 
     get(url, params) {
         if (!url) return;
         return service({
             url: url,
             method: 'get',
-            params: params
+            params: params,
+            headers: {
+                'Authorization': 'Bearer '+ sessionStorage.getItem('auth.access_token')
+            }
         })
     },
     delete(url, params) {
@@ -52,7 +55,10 @@ export default {
         return service({
             url: url,
             method: 'delete',
-            params: params
+            params: params,
+            headers: {
+                'Authorization': 'Bearer '+ sessionStorage.getItem('auth.access_token')
+            }
         })
     },
     post(url, data) {
@@ -61,7 +67,10 @@ export default {
             method: 'post',
             url: url,
             // data: qs.stringify(data),
-            data: data
+            data: data,
+            headers: {
+                'Authorization': 'Bearer '+ sessionStorage.getItem('auth.access_token')
+            }
         })
     },
     put(url, data) {
@@ -69,7 +78,10 @@ export default {
         return service({
             method: 'put',
             url: url,
-            data: data
+            data: data,
+            headers: {
+                'Authorization': 'Bearer '+ sessionStorage.getItem('auth.access_token')
+            }
         })
     },
     patch(url, data) {
@@ -77,7 +89,10 @@ export default {
         return service({
             method: 'patch',
             url: url,
-            data: data
+            data: data,
+            headers: {
+                'Authorization': 'Bearer '+ sessionStorage.getItem('auth.access_token')
+            }
         })
       }
 }

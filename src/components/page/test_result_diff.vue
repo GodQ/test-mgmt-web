@@ -142,7 +142,7 @@ import {
   fetchDetails,
   fetchTestrunList,
   fetchIndexList,
-} from "../../api/data_provider";
+} from "../../api/data_provider_for_test_result";
 export default {
   name: "test_result_diff",
   data() {

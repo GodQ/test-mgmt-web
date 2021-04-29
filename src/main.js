@@ -28,7 +28,9 @@ const i18n = new VueI18n({
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     const role = sessionStorage.getItem('auth.user_role');
-    if (!role && to.path !== '/login') {
+    const username = sessionStorage.getItem('auth.user_name');
+    const access_token = sessionStorage.getItem('auth.access_token');
+    if ((!role | ! username | !access_token) && to.path !== '/login') {
         next('/login');
     } else if (to.meta.permission) {
         role === to.meta.permission ? next() : next('/403');

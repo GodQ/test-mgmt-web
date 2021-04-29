@@ -53,11 +53,12 @@
                                 alert("Login Failed!!!")
                                 return false
                             }
-                            var token = res.data.token
-                            console.log("Get token: "+token)
-                            useToken(token)
+                            var access_token = res.data.access_token
+                            console.log("Get access_token: "+access_token)
+                            // useToken(access_token) # set default auth header
                             sessionStorage.setItem('auth.user_name',res.data.user_name);
                             sessionStorage.setItem('auth.user_role',res.data.role);
+                            sessionStorage.setItem('auth.access_token',access_token);
                             this.$router.push('/');
                             return true
                         }
@@ -65,6 +66,9 @@
                             alert("Login Failed!!! \n"+err)
                             return false
                         })
+                        // sessionStorage.setItem('auth.user_name',this.ruleForm.username);
+                        // sessionStorage.setItem('auth.user_role','QE');
+                        // this.$router.push('/');
                     } else {
                         console.error('error submit!!');
                         return false;

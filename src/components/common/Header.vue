@@ -67,7 +67,8 @@
                 if(command == 'logout'){
                     sessionStorage.removeItem('auth.user_name')
                     sessionStorage.removeItem('auth.user_role')
-                    useToken('')
+                    sessionStorage.removeItem('auth.access_token')
+                    // useToken('')
                     this.$router.push('/login');
                 }
             },

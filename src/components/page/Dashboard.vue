@@ -96,7 +96,7 @@
 <script>
     import Schart from 'vue-schart';
     import bus from '../common/bus';
-    import { fetchSummary, fetchIndexList, fetchTestrunList } from '../../api/data_provider';
+    import { fetchSummary, fetchIndexList, fetchTestrunList } from '../../api/data_provider_for_test_result';
     export default {
         name: 'dashboard',
         data() {
