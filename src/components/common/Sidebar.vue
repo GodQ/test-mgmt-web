@@ -59,6 +59,11 @@
                         title: 'User Management',
                         role: 'admin'
                     },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'mock_service',
+                        title: 'Mock Service'
+                    },
                     // {
                     //     icon: 'el-icon-lx-copy',
                     //     index: 'tabs',

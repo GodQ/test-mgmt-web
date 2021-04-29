@@ -35,6 +35,11 @@ export default new Router({
                     meta: { title: 'User Management', permission: 'admin' }
                 },
                 {
+                    path: '/mock_service',
+                    component: resolve => require(['../components/page/mock_service.vue'], resolve),
+                    meta: { title: 'Mock Service' }
+                },
+                {
                     path: '/tabs',
                     component: resolve => require(['../components/page/Tabs.vue'], resolve),
                     meta: { title: 'Messages' }
