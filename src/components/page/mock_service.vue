@@ -144,7 +144,7 @@
                 var mock_server_id = row_data['mock_server_id']
                 get_mock_server(mock_server_id).then((res) => {
                     this.edit_form = res.data;
-                    this.edit_form.mock_rules = JSON.stringify(this.edit_form.mock_rules)
+                    this.edit_form.mock_rules = JSON.stringify(this.edit_form.mock_rules, null, " ")
                     this.editVisible = true;
                 })
             },
