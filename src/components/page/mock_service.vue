@@ -15,7 +15,7 @@
                 <!-- <el-table-column type="selection" width="55" column-key="selection" align="center"></el-table-column> -->
                 <el-table-column prop="mock_server_id" label="mock_server_id" column-key="mock_server_id" sortable>
                 </el-table-column>
-                <el-table-column prop="mock_url" label="mock_url" column-key="mock_url" sortable>
+                <el-table-column prop="target_url" label="target_url" column-key="target_url" sortable>
                 </el-table-column>
                 <el-table-column prop="access_url" label="access_url" column-key="access_url" sortable>
                 </el-table-column>
@@ -35,24 +35,25 @@
 
         <!-- Edit -->
         <el-dialog title="Edit" :visible.sync="editVisible" width="40%">
-            <el-form ref="form" :model="form" label-width="100px">
+            <el-form ref="edit_form" :model="edit_form" label-width="100px">
                 <el-form-item label="Mock Server id">
-                    <el-input v-model="form.mock_server_id" :disabled="true"></el-input>
+                    <el-input v-model="edit_form.mock_server_id" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="Mock URL">
-                    <el-input v-model="form.mock_url" :disabled="true"></el-input>
+                    <el-input v-model="edit_form.target_url" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="Access URL">
-                    <el-input v-model="form.access_url" :disabled="true"></el-input>
+                    <el-input v-model="edit_form.access_url" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="Monitor Web URL">
-                    <el-input v-model="form.monitor_web_url" :disabled="true"></el-input>
+                    <el-input v-model="edit_form.monitor_web_url" :disabled="true"></el-input>
                 </el-form-item>
 
                 <el-form-item label="Mock Rules">
-                    <el-input v-model="form.mock_rules" :disabled="false"
+                    <el-input v-model="edit_form.mock_rules" :disabled="false"
                     type="textarea" :autosize="{ minRows: 10, maxRows: 50}"
                     ></el-input>
+                    <el-button type="primary" icon="el-icon-lx-refresh" @click="format_edit_mock_rules">Format</el-button> 
                 </el-form-item>
 
             </el-form>
@@ -69,13 +70,14 @@
                     <el-input v-model="create_form.mock_server_id" :disabled="false"></el-input>
                 </el-form-item>
                 <el-form-item label="Mock URL">
-                    <el-input v-model="create_form.mock_url" :disabled="false"></el-input>
+                    <el-input v-model="create_form.target_url" :disabled="false"></el-input>
                 </el-form-item>
 
                 <el-form-item label="Mock Rules">
                     <el-input v-model="create_form.mock_rules" :disabled="false"
                     type="textarea" :autosize="{ minRows: 10, maxRows: 50}"
                     ></el-input>
+                    <el-button type="primary" icon="el-icon-lx-refresh" @click="format_create_mock_rules">Format</el-button> 
                 </el-form-item>
 
             </el-form>
@@ -102,16 +104,16 @@
                 multipleSelection: [],
                 editVisible: false,
                 createVisible: false,
-                form: {
+                edit_form: {
                     mock_server_id: '',
-                    mock_url: '',
+                    target_url: '',
                     access_url: '',
                     monitor_web_url: '',
                     mock_rules: ''
                 },
                 create_form: {
                     mock_server_id: '',
-                    mock_url: '',
+                    target_url: '',
                     mock_rules: ''
                 },
             }
@@ -141,8 +143,8 @@
                 var row_data = JSON.parse(JSON.stringify(row))
                 var mock_server_id = row_data['mock_server_id']
                 get_mock_server(mock_server_id).then((res) => {
-                    this.form = res.data;
-                    this.form.mock_rules = JSON.stringify(this.form.mock_rules)
+                    this.edit_form = res.data;
+                    this.edit_form.mock_rules = JSON.stringify(this.edit_form.mock_rules)
                     this.editVisible = true;
                 })
             },
@@ -173,14 +175,14 @@
             },
             // 保存编辑
             saveEdit() {
-                this.editVisible = false;
-                var mock_server_id = this.form.mock_server_id
-                var mock_rules = this.form.mock_rules
+                var mock_server_id = this.edit_form.mock_server_id
+                var mock_rules = this.edit_form.mock_rules
                 var data = {
                     mock_rules: mock_rules
                 }
                 update_mock_server(mock_server_id, data).then((res) => {
                     // console.log(res)
+                    this.editVisible = false;
                     this.$message.success(`Save successfully`);
                     this.getData()
                 }).catch(function (error) {
@@ -197,15 +199,18 @@
                 });
             },
             saveNew() {
-                this.createVisible = false;
-                var mock_rules = JSON.parse(this.create_form.mock_rules)
+                if(this.create_form.mock_rules)
+                    var mock_rules = JSON.parse(this.create_form.mock_rules)
+                else
+                    var mock_rules = []
                 var data = {
                     mock_server_id: this.create_form.mock_server_id,
-                    mock_url: this.create_form.mock_url,
+                    target_url: this.create_form.target_url,
                     mock_rules: mock_rules
                 }
                 create_mock_server(data).then((res) => {
                     // console.log(res)
+                    this.createVisible = false;
                     this.$message.success(`Save successfully`);
                     this.getData()
                 }).catch(function (error) {
@@ -220,6 +225,16 @@
                         alert(error.message)
                     }
                 });
+            },
+            format_create_mock_rules(){
+                var rules = this.create_form.mock_rules;
+                rules = JSON.stringify(JSON.parse(rules), null, " ");
+                this.create_form.mock_rules = rules;
+            },
+            format_edit_mock_rules(){
+                var rules = this.edit_form.mock_rules;
+                rules = JSON.stringify(JSON.parse(rules), null, " ");
+                this.edit_form.mock_rules = rules;
             }
         }
     }
