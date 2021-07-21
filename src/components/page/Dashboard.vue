@@ -96,7 +96,7 @@
 <script>
     import Schart from 'vue-schart';
     import bus from '../common/bus';
-    import { fetchSummary, fetchIndexList, fetchTestrunList } from '../../api/data_provider_for_test_result';
+    import { fetchSummary, fetchProjectList, fetchTestrunList } from '../../api/data_provider_for_test_result';
     export default {
         name: 'dashboard',
         data() {
@@ -182,7 +182,7 @@
                 })
             },
             getIndexList() {
-                fetchIndexList().then((res) => {
+                fetchProjectList().then((res) => {
                     var indices = res.data.data
                     this.index_items = new Array()
                     for(var key of indices){
@@ -201,7 +201,7 @@
                     'id_only': 'false',
                     'limit': 10
                 }
-                fetchTestrunList(params).then((res) => {
+                fetchTestrunList(this.selected_index, params).then((res) => {
                     var testruns = res.data.data
                     this.success_rate_chart_data = new Array()
                     for(var testrun of testruns){

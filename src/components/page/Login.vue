@@ -68,6 +68,7 @@
                         })
                         // sessionStorage.setItem('auth.user_name',this.ruleForm.username);
                         // sessionStorage.setItem('auth.user_role','QE');
+                        // sessionStorage.setItem('auth.access_token','aaa');
                         // this.$router.push('/');
                     } else {
                         console.error('error submit!!');

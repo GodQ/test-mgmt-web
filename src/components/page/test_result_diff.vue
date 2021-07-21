@@ -139,9 +139,9 @@
 <script>
 import {
   fetchDiffData,
-  fetchDetails,
+  fetchTestResults,
   fetchTestrunList,
-  fetchIndexList,
+  fetchProjectList,
 } from "../../api/data_provider_for_test_result";
 export default {
   name: "test_result_diff",
@@ -196,7 +196,7 @@ export default {
   created() {
     this.getData();
     // this.getTestrunList()
-    this.getIndexList();
+    this.getProjectList();
   },
   computed: {
     data() {
@@ -206,7 +206,7 @@ export default {
   methods: {
     // 获取 test result 数据
     getData(params) {
-      fetchDiffData(params).then((res) => {
+      fetchDiffData(this.selected_index, params).then((res) => {
         this.tableData = res.data.data;
         var testruns = res.data.testruns;
         this.tableDataHeader = Array();
@@ -232,7 +232,7 @@ export default {
         index: this.selected_index,
         id_only: "true",
       };
-      fetchTestrunList(params).then((res) => {
+      fetchTestrunList(this.selected_index, params).then((res) => {
         var testruns = res.data.data;
         this.testrun_items = new Array();
         for (var key of testruns) {
@@ -240,8 +240,8 @@ export default {
         }
       });
     },
-    getIndexList() {
-      fetchIndexList().then((res) => {
+    getProjectList() {
+      fetchProjectList().then((res) => {
         var indices = res.data.data;
         this.index_items = new Array();
         for (var key of indices) {
@@ -293,7 +293,7 @@ export default {
       params["testrun_id"] = row["testrun_id"];
       params["case_id"] = row["case_id"];
       params["details"] = true;
-      fetchDetails(params).then((res) => {
+      fetchTestResults(this.selected_index, params).then((res) => {
         this.details = res.data.data[0];
       });
       this.detailsVisible = true;

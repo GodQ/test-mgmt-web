@@ -130,7 +130,7 @@
 </template>
 
 <script>
-    import { fetchData, fetchDetails, updateData, fetchTestrunList, fetchIndexList } from '../../api/data_provider_for_test_result';
+    import { fetchTestResults, updateTestResults, fetchTestrunList, fetchProjectList } from '../../api/data_provider_for_test_result';
     export default {
         name: 'test_result',
         data() {
@@ -210,7 +210,7 @@
             },
             // 获取 test result 数据
             getData(params) {
-                fetchData(params).then((res) => {
+                fetchTestResults(this.selected_index, params).then((res) => {
                     this.tableData = res.data.data;
                     this.total_num = res.data.page_info.total
                     // console.info(this.tableData)
@@ -225,7 +225,7 @@
                     'index':this.selected_index,
                     'id_only': 'true'
                 }
-                fetchTestrunList(params).then((res) => {
+                fetchTestrunList(this.selected_index, params).then((res) => {
                     var testruns = res.data.data
                     this.testrun_items = new Array()
                     for(var key of testruns){
@@ -234,7 +234,7 @@
                 })
             },
             getIndexList() {
-                fetchIndexList().then((res) => {
+                fetchProjectList().then((res) => {
                     var indices = res.data.data
                     this.index_items = new Array()
                     for(var key of indices){
@@ -345,7 +345,7 @@
                 params["testrun_id"] = row['testrun_id']
                 params["case_id"] = row['case_id']
                 params["details"] = true
-                fetchDetails(params).then((res) => {
+                fetchTestResults(this.selected_index, params).then((res) => {
                     this.details = res.data.data[0];
                 })
                 this.detailsVisible = true;
@@ -356,7 +356,7 @@
             // 保存编辑
             saveEdit() {
                 this.editVisible = false;
-                updateData(this.form).then((res) => {
+                updateTestResults(this.selected_index, this.form).then((res) => {
                     // console.log(res)
                     for(let i = 0; i < this.tableData.length; i++){
                         if(this.tableData[i].case_id === this.form.case_id &&
