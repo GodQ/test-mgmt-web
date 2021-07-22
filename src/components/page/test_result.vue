@@ -7,7 +7,7 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                Component:
+                Project:
                 <el-select v-model="selected_project" placeholder="Select Project" class="handle-select mr10">
                     <!-- <el-option key="1" label="godq" value="godq"></el-option> -->
                     <el-option
@@ -17,6 +17,27 @@
                         :value="item.value">
                     </el-option>
                 </el-select>
+                Test Environment:
+                <el-select v-model="selected_env" placeholder="Select Test Environment" class="handle-select mr10">
+                    <el-option
+                        v-for="item in project_envs"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+                Test Suite:
+                <el-select v-model="selected_suite" placeholder="Select Test Suite" class="handle-select mr10">
+                    <el-option
+                        v-for="item in project_suites"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+            </div>
+
+            <div class="handle-box">
                 TestRun:
                 <el-select v-model="selected_testrun" placeholder="Select TestRun" class="handle-select mr10">
                     <!-- <el-option key="1" label="godq" value="godq"></el-option> -->
@@ -31,7 +52,9 @@
                 <el-input v-model="inputed_word" placeholder="search keyword" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="search">Search</el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="reload">Reload</el-button> 
+                
             </div>
+
             <el-table :data="tableData" 
               border class="table" ref="multipleTable" 
                 @selection-change="handleSelectionChange" 
@@ -142,6 +165,10 @@
                 total_num: 0,
                 project_items: [],
                 testrun_items: [],
+                project_suites: ['all', 'prod_sanity', 'stg_sanity', 'regression', 'full_regression'],
+                selected_suite: '',
+                project_envs: ['all', 'dev0', 'stg', 'prod'],
+                selected_env: '',
                 multipleSelection: [],
                 selected_project: '',
                 selected_testrun: '',
@@ -171,11 +198,19 @@
         watch: {
             "selected_project": function (value) {
                 this.selected_testrun = null
-                this.getTestrunList()
+                this.getTestrunList('project')
+            },
+            "selected_env": function (value) {
+                this.selected_testrun = null
+                this.getTestrunList('env')
+            },
+            "selected_suite": function (value) {
+                this.selected_testrun = null
+                this.getTestrunList('suite')
             },
         },
         created() {
-            // this.getData(); # here user did not select project
+            // this.getTestResults(); # here user did not select project
             // this.getTestrunList()
             this.getProjectList();
             console.log(sessionStorage.getItem('auth.user_role'))
@@ -209,7 +244,7 @@
                 console.log(filter)
             },
             // 获取 test result 数据
-            getData(params) {
+            getTestResults(params) {
                 fetchTestResults(this.selected_project, params).then((res) => {
                     this.tableData = res.data.data;
                     this.total_num = res.data.page_info.total
@@ -218,18 +253,29 @@
                     // this.load_select_items()
                 })
             },
-            getTestrunList() {
+            getTestrunList(source) {
                 if(!this.selected_project)
                     return
                 var params = {
                     'project_id':this.selected_project,
+                    'env':this.selected_env,
+                    'suite':this.selected_suite,
                     'id_only': 'true'
                 }
                 fetchTestrunList(this.selected_project, params).then((res) => {
                     var testruns = res.data.data
-                    this.testrun_items = new Array()
-                    for(var key of testruns){
-                        this.testrun_items.push({"key":key, "value":key})
+                    if(testruns.length > 0){
+                        this.testrun_items = new Array()
+                        for(var key of testruns){
+                            this.testrun_items.push({"key":key, "value":key})
+                        }
+                    }else{
+                        alert('There is no testrun matched ')
+                        console.warn('There is no testrun matched for '+ JSON.stringify(params))
+                        if(source=='env')
+                            this.selected_env = null
+                        else if(source=='suite')
+                            this.selected_suite = null
                     }
                 })
             },
@@ -280,7 +326,7 @@
                 if(this.inputed_word){
                     params["keyword"] = this.inputed_word
                 }
-                this.getData(params)
+                this.getTestResults(params)
             },
             handleCurrentChange(val) {
                 this.cur_page = val;
@@ -299,7 +345,7 @@
                     params["keyword"] = this.inputed_word
                 }
                 console.info(params)
-                this.getData(params)
+                this.getTestResults(params)
             },
             handleSizeChange(val) {
                 this.page_size = val;
@@ -318,10 +364,10 @@
                     params["keyword"] = this.inputed_word
                 }
                 console.info(params)
-                this.getData(params)
+                this.getTestResults(params)
             },
             reload() {
-                // this.getData()
+                // this.getTestResults()
                 this.selected_project = ""
                 this.selected_testrun = ""
                 // this.getTestrunList()

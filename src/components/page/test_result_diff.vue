@@ -10,22 +10,37 @@
     </div>
     <div>
       <el-container>
-        <el-aside>
-          Project:
-          <el-select
-            v-model="selected_project"
-            placeholder="Select Project"
-            class="handle-select mr10"
-          >
-            <el-option
-              v-for="item in project_items"
-              :key="item.value"
-              :label="item.value"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-aside>
+        <div>
+                Project:
+                <el-select v-model="selected_project" placeholder="Select Project" class="handle-select mr10">
+                    <!-- <el-option key="1" label="godq" value="godq"></el-option> -->
+                    <el-option
+                        v-for="item in project_items"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+                Test Environment:
+                <el-select v-model="selected_env" placeholder="Select Test Environment" class="handle-select mr10">
+                    <el-option
+                        v-for="item in project_envs"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+                Test Suite:
+                <el-select v-model="selected_suite" placeholder="Select Test Suite" class="handle-select mr10">
+                    <el-option
+                        v-for="item in project_suites"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+        </div>
+        <el-divider><i class="el-icon-bottom"></i></el-divider>
         <el-main>
           <div>Add TestRun to Diff:</div>
           <el-transfer
@@ -174,6 +189,10 @@ export default {
       project_items: [],
       testrun_items: [],
       selected_project: "",
+      project_suites: ['all', 'prod_sanity', 'stg_sanity', 'regression', 'full_regression'],
+      selected_suite: '',
+      project_envs: ['all', 'dev0', 'stg', 'prod'],
+      selected_env: '',
       detailsVisible: false,
       details: {
         case_id: "",
@@ -188,13 +207,21 @@ export default {
     };
   },
   watch: {
-    selected_project: function(value) {
-      this.selected_testrun = null;
-      this.getTestrunList();
-    },
+            "selected_project": function (value) {
+                this.selected_testrun = null
+                this.getTestrunList('project')
+            },
+            "selected_env": function (value) {
+                this.selected_testrun = null
+                this.getTestrunList('env')
+            },
+            "selected_suite": function (value) {
+                this.selected_testrun = null
+                this.getTestrunList('suite')
+            },
   },
   created() {
-    this.getData();
+    // this.getTestResults();
     // this.getTestrunList()
     this.getProjectList();
   },
@@ -205,7 +232,7 @@ export default {
   },
   methods: {
     // 获取 test result 数据
-    getData(params) {
+    getTestResults(params) {
       fetchDiffData(this.selected_project, params).then((res) => {
         this.tableData = res.data.data;
         var testruns = res.data.testruns;
@@ -226,17 +253,28 @@ export default {
         // this.load_select_items()
       });
     },
-    getTestrunList() {
+    getTestrunList(source) {
       if (!this.selected_project) return;
       var params = {
         project_id: this.selected_project,
+        'env':this.selected_env,
+        'suite':this.selected_suite,
         id_only: "true",
       };
       fetchTestrunList(this.selected_project, params).then((res) => {
         var testruns = res.data.data;
-        this.testrun_items = new Array();
-        for (var key of testruns) {
-          this.testrun_items.push({ key: key, label: key });
+        if(testruns.length > 0){
+          this.testrun_items = new Array();
+          for (var key of testruns) {
+            this.testrun_items.push({ key: key, label: key });
+          }
+        }else{
+          alert('There is no testrun matched ')
+          console.warn('There is no testrun matched for '+ JSON.stringify(params))
+          if(source=='env')
+            this.selected_env = null
+          else if(source=='suite')
+            this.selected_suite = null
         }
       });
     },
@@ -281,7 +319,7 @@ export default {
       if (this.selected_testrun_list) {
         params["testruns"] = this.selected_testrun_list.join(",");
       }
-      this.getData(params);
+      this.getTestResults(params);
     },
 
     handleDetails(project_id, row) {

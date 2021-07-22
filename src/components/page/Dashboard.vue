@@ -35,7 +35,7 @@
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
                                     <div class="grid-num">{{project_count}}</div>
-                                    <div>Components</div>
+                                    <div>Projects</div>
                                 </div>
                             </div>
                         </el-card>
@@ -67,7 +67,7 @@
         </el-row>
         <div>
         Select Project:
-                <el-select v-model="selected_project" placeholder="Select Component" class="handle-select mr10">
+                <el-select v-model="selected_project" placeholder="Select Project" class="handle-select mr10">
                     <el-option
                         v-for="item in project_items"
                         :key="item.value"
@@ -75,6 +75,25 @@
                         :value="item.value">
                     </el-option>
                 </el-select>
+        Test Environment:
+                <el-select v-model="selected_env" placeholder="Select Test Environment" class="handle-select mr10">
+                    <el-option
+                        v-for="item in project_envs"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+        Test Suite:
+                <el-select v-model="selected_suite" placeholder="Select Test Suite" class="handle-select mr10">
+                    <el-option
+                        v-for="item in project_suites"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+
             <el-row :gutter="20">
                 <el-col :span="20">
                     <el-card shadow="hover">
@@ -127,9 +146,13 @@
                 total: null,
                 project_count: null,
                 testrun_count: null,
-                project_items: [],
                 testruns: [],
+                project_items: [],
                 selected_project: '',
+                project_suites: ['all', 'prod_sanity', 'stg_sanity', 'regression', 'full_regression'],
+                selected_suite: '',
+                project_envs: ['all', 'dev0', 'stg', 'prod'],
+                selected_env: '',
                 success_rate_chart_data: [
                     // {
                     //     name: '2018/09/04',
@@ -175,7 +198,13 @@
         },
         watch: {
             "selected_project": function (value) {
-                this.getTestRunList()
+                this.getTestrunList()
+            },
+            "selected_env": function (value) {
+                this.getTestrunList()
+            },
+            "selected_suite": function (value) {
+                this.getTestrunList()
             },
         },
         created(){
@@ -216,21 +245,33 @@
                     }
                 })
             },
-            getTestRunList() {
+            getTestrunList(source) {
                 if(!this.selected_project)
                     return
                 var params = {
                     'project':this.selected_project,
+                    'env':this.selected_env,
+                    'suite':this.selected_suite,
                     'id_only': 'false',
                     'limit': 10
                 }
                 fetchTestrunList(this.selected_project, params).then((res) => {
                     var testruns = res.data.data
-                    this.testruns = testruns
-                    this.success_rate_chart_data = new Array()
-                    for(var testrun of testruns){
-                        this.success_rate_chart_data.push(
-                            {"name":testrun['testrun_id'], "value":testrun['success_rate']})
+                    if(testruns.length > 0){
+                        this.testruns = testruns
+                        this.success_rate_chart_data = new Array()
+                        for(var testrun of testruns){
+                            this.success_rate_chart_data.push(
+                                {"name":testrun['testrun_id'], "value":testrun['success_rate']})
+                        }
+                        
+                    }else{
+                        alert('There is no testrun matched ')
+                        console.warn('There is no testrun matched for '+ JSON.stringify(params))
+                        if(source=='env')
+                            this.selected_env = null
+                        else if(source=='suite')
+                            this.selected_suite = null
                     }
                 })
             },
