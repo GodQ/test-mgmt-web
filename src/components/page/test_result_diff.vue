@@ -11,14 +11,14 @@
     <div>
       <el-container>
         <el-aside>
-          Component:
+          Project:
           <el-select
-            v-model="selected_index"
-            placeholder="Select Component"
+            v-model="selected_project"
+            placeholder="Select Project"
             class="handle-select mr10"
           >
             <el-option
-              v-for="item in index_items"
+              v-for="item in project_items"
               :key="item.value"
               :label="item.value"
               :value="item.value"
@@ -39,7 +39,7 @@
         </el-main>
         <el-footer>
           <el-button type="primary" icon="el-icon-search" @click="search"
-            >Search</el-button
+            >Analyze</el-button
           >
         </el-footer>
       </el-container>
@@ -80,8 +80,8 @@
             >
             </el-table-column>
             <el-table-column
-              v-for="(item, index) in tableDataHeader"
-              :key="index"
+              v-for="(item, project_id) in tableDataHeader"
+              :key="project_id"
               :prop="item.prop"
               :label="item.col"
               sortable
@@ -171,9 +171,9 @@ export default {
             }
       ],
       testrun_list: [],
-      index_items: [],
+      project_items: [],
       testrun_items: [],
-      selected_index: "",
+      selected_project: "",
       detailsVisible: false,
       details: {
         case_id: "",
@@ -188,7 +188,7 @@ export default {
     };
   },
   watch: {
-    selected_index: function(value) {
+    selected_project: function(value) {
       this.selected_testrun = null;
       this.getTestrunList();
     },
@@ -206,7 +206,7 @@ export default {
   methods: {
     // 获取 test result 数据
     getData(params) {
-      fetchDiffData(this.selected_index, params).then((res) => {
+      fetchDiffData(this.selected_project, params).then((res) => {
         this.tableData = res.data.data;
         var testruns = res.data.testruns;
         this.tableDataHeader = Array();
@@ -227,12 +227,12 @@ export default {
       });
     },
     getTestrunList() {
-      if (!this.selected_index) return;
+      if (!this.selected_project) return;
       var params = {
-        index: this.selected_index,
+        project_id: this.selected_project,
         id_only: "true",
       };
-      fetchTestrunList(this.selected_index, params).then((res) => {
+      fetchTestrunList(this.selected_project, params).then((res) => {
         var testruns = res.data.data;
         this.testrun_items = new Array();
         for (var key of testruns) {
@@ -243,12 +243,12 @@ export default {
     getProjectList() {
       fetchProjectList().then((res) => {
         var indices = res.data.data;
-        this.index_items = new Array();
+        this.project_items = new Array();
         for (var key of indices) {
-          this.index_items.push({ key: key, value: key });
+          this.project_items.push({ key: key, value: key });
         }
-        if (this.index_items.length === 1) {
-          this.selected_index = this.index_items[0].value;
+        if (this.project_items.length === 1) {
+          this.selected_project = this.project_items[0].value;
         }
         // this.getTestrunList()
       });
@@ -257,26 +257,26 @@ export default {
       //useless for now, this need fetch all data, it's too large
       var testruns = {};
       var components = {};
-      this.index_items = new Array();
+      this.project_items = new Array();
       this.testrun_items = new Array();
       for (let t of this.tableData) {
         testruns[t.testrun_id] = t.testrun_id;
-        components[t.index] = t.index;
+        components[t.project_id] = t.project_id;
       }
       for (var key in testruns) {
         this.testrun_items.push({ key: key, label: testruns[key] });
       }
       for (var key in components) {
-        this.index_items.push({ key: key, value: components[key] });
+        this.project_items.push({ key: key, value: components[key] });
       }
-      if (this.index_items.length === 1) {
-        this.selected_index = this.index_items[0].value;
+      if (this.project_items.length === 1) {
+        this.selected_project = this.project_items[0].value;
       }
     },
     search() {
       var params = {};
-      if (this.selected_index) {
-        params["index"] = this.selected_index;
+      if (this.selected_project) {
+        params["project_id"] = this.selected_project;
       }
       if (this.selected_testrun_list) {
         params["testruns"] = this.selected_testrun_list.join(",");
@@ -284,16 +284,16 @@ export default {
       this.getData(params);
     },
 
-    handleDetails(index, row) {
+    handleDetails(project_id, row) {
       // this.form = JSON.parse(JSON.stringify(row))
       var params = {};
-      if (this.selected_index) {
-        params["index"] = this.selected_index;
+      if (this.selected_project) {
+        params["project_id"] = this.selected_project;
       }
       params["testrun_id"] = row["testrun_id"];
       params["case_id"] = row["case_id"];
       params["details"] = true;
-      fetchTestResults(this.selected_index, params).then((res) => {
+      fetchTestResults(this.selected_project, params).then((res) => {
         this.details = res.data.data[0];
       });
       this.detailsVisible = true;

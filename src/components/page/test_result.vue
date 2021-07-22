@@ -8,10 +8,10 @@
         <div class="container">
             <div class="handle-box">
                 Component:
-                <el-select v-model="selected_index" placeholder="Select Component" class="handle-select mr10">
+                <el-select v-model="selected_project" placeholder="Select Project" class="handle-select mr10">
                     <!-- <el-option key="1" label="godq" value="godq"></el-option> -->
                     <el-option
-                        v-for="item in index_items"
+                        v-for="item in project_items"
                         :key="item.value"
                         :label="item.value"
                         :value="item.value">
@@ -140,10 +140,10 @@
                 cur_page: 1,
                 page_size: 10,
                 total_num: 0,
-                index_items: [],
+                project_items: [],
                 testrun_items: [],
                 multipleSelection: [],
-                selected_index: '',
+                selected_project: '',
                 selected_testrun: '',
                 inputed_word: '',
                 edit_disabled: true,
@@ -169,15 +169,15 @@
             }
         },
         watch: {
-            "selected_index": function (value) {
+            "selected_project": function (value) {
                 this.selected_testrun = null
                 this.getTestrunList()
             },
         },
         created() {
-            this.getData();
+            // this.getData(); # here user did not select project
             // this.getTestrunList()
-            this.getIndexList();
+            this.getProjectList();
             console.log(sessionStorage.getItem('auth.user_role'))
             if(sessionStorage.getItem('auth.user_role')=='viewer'){
                 this.edit_disabled = true
@@ -210,7 +210,7 @@
             },
             // 获取 test result 数据
             getData(params) {
-                fetchTestResults(this.selected_index, params).then((res) => {
+                fetchTestResults(this.selected_project, params).then((res) => {
                     this.tableData = res.data.data;
                     this.total_num = res.data.page_info.total
                     // console.info(this.tableData)
@@ -219,13 +219,13 @@
                 })
             },
             getTestrunList() {
-                if(!this.selected_index)
+                if(!this.selected_project)
                     return
                 var params = {
-                    'index':this.selected_index,
+                    'project_id':this.selected_project,
                     'id_only': 'true'
                 }
-                fetchTestrunList(this.selected_index, params).then((res) => {
+                fetchTestrunList(this.selected_project, params).then((res) => {
                     var testruns = res.data.data
                     this.testrun_items = new Array()
                     for(var key of testruns){
@@ -233,43 +233,46 @@
                     }
                 })
             },
-            getIndexList() {
+            getProjectList() {
                 fetchProjectList().then((res) => {
                     var indices = res.data.data
-                    this.index_items = new Array()
+                    this.project_items = new Array()
                     for(var key of indices){
-                        this.index_items.push({"key":key, "value":key})
+                        this.project_items.push({"key":key, "value":key})
                     }
-                    if(this.index_items.length===1){
-                        this.selected_index = this.index_items[0].value
+                    // if(this.project_items.length===1){
+                    //     this.selected_project = this.project_items[0].value
+                    // }
+                    if(this.project_items.length > 0){
+                        this.selected_project = this.project_items[this.project_items.length-1].value
+                        this.getTestrunList()
                     }
-                    // this.getTestrunList()
                 })
             },
             load_select_items() {  //useless for now, this need fetch all data, it's too large
                 var testruns = {}
                 var components = {}
-                this.index_items = new Array()
+                this.project_items = new Array()
                 this.testrun_items = new Array()
                 for(let t of this.tableData) {
                     testruns[t.testrun_id] = t.testrun_id
-                    components[t.index] = t.index
+                    components[t.project_id] = t.project_id
                 }
                 for(var key in testruns){
                     this.testrun_items.push({"key":key, "value":testruns[key]})
                 }
                 for(var key in components){
-                    this.index_items.push({"key":key, "value":components[key]})
+                    this.project_items.push({"key":key, "value":components[key]})
                 }
-                if(this.index_items.length===1){
-                    this.selected_index = this.index_items[0].value
+                if(this.project_items.length===1){
+                    this.selected_project = this.project_items[0].value
                 }
             },
             search() {
                 this.cur_page = 1;
                 var params = {}
-                if(this.selected_index){
-                    params["index"] = this.selected_index
+                if(this.selected_project){
+                    params["project_id"] = this.selected_project
                 }
                 if(this.selected_testrun){
                     params["testrun_id"] = this.selected_testrun
@@ -286,8 +289,8 @@
                 if(this.cur_page){
                     params["offset"] = (this.cur_page-1) * this.page_size
                 }
-                if(this.selected_index){
-                    params["index"] = this.selected_index
+                if(this.selected_project){
+                    params["project_id"] = this.selected_project
                 }
                 if(this.selected_testrun){
                     params["testrun_id"] = this.selected_testrun
@@ -305,8 +308,8 @@
                 if(this.cur_page){
                     params["offset"] = (this.cur_page-1) * this.page_size
                 }
-                if(this.selected_index){
-                    params["index"] = this.selected_index
+                if(this.selected_project){
+                    params["project_id"] = this.selected_project
                 }
                 if(this.selected_testrun){
                     params["testrun_id"] = this.selected_testrun
@@ -319,10 +322,10 @@
             },
             reload() {
                 // this.getData()
-                this.selected_index = ""
+                this.selected_project = ""
                 this.selected_testrun = ""
                 // this.getTestrunList()
-                this.getIndexList()
+                this.getProjectList()
                 this.search()
             },
             formatter(row, column) {
@@ -339,13 +342,13 @@
             handleDetails(index, row) {
                 // this.form = JSON.parse(JSON.stringify(row))
                 var params = {}
-                if(this.selected_index){
-                    params["index"] = this.selected_index
+                if(this.selected_project){
+                    params["project_id"] = this.selected_project
                 }
                 params["testrun_id"] = row['testrun_id']
                 params["case_id"] = row['case_id']
                 params["details"] = true
-                fetchTestResults(this.selected_index, params).then((res) => {
+                fetchTestResults(this.selected_project, params).then((res) => {
                     this.details = res.data.data[0];
                 })
                 this.detailsVisible = true;
@@ -356,7 +359,7 @@
             // 保存编辑
             saveEdit() {
                 this.editVisible = false;
-                updateTestResults(this.selected_index, this.form).then((res) => {
+                updateTestResults(this.selected_project, this.form).then((res) => {
                     // console.log(res)
                     for(let i = 0; i < this.tableData.length; i++){
                         if(this.tableData[i].case_id === this.form.case_id &&

@@ -34,7 +34,7 @@
                             <div class="grid-content grid-con-1">
                                 <i class="el-icon-lx-people grid-con-icon"></i>
                                 <div class="grid-cont-right">
-                                    <div class="grid-num">{{index_count}}</div>
+                                    <div class="grid-num">{{project_count}}</div>
                                     <div>Components</div>
                                 </div>
                             </div>
@@ -66,10 +66,10 @@
             </el-col>
         </el-row>
         <div>
-        Select Component:
-                <el-select v-model="selected_index" placeholder="Select Component" class="handle-select mr10">
+        Select Project:
+                <el-select v-model="selected_project" placeholder="Select Component" class="handle-select mr10">
                     <el-option
-                        v-for="item in index_items"
+                        v-for="item in project_items"
                         :key="item.value"
                         :label="item.value"
                         :value="item.value">
@@ -104,10 +104,10 @@
                 user_name: sessionStorage.getItem('auth.user_name'),
                 user_role: sessionStorage.getItem('auth.user_role'),
                 total: null,
-                index_count: null,
+                project_count: null,
                 testrun_count: null,
-                index_items: [],
-                selected_index: '',
+                project_items: [],
+                selected_project: '',
                 success_rate_chart_data: [
                     // {
                     //     name: '2018/09/04',
@@ -152,7 +152,7 @@
             }
         },
         watch: {
-            "selected_index": function (value) {
+            "selected_project": function (value) {
                 this.getTestRunList()
             },
         },
@@ -163,7 +163,7 @@
 
             this.handleListener();
             this.get_summary();
-            this.getIndexList();
+            this.getProjectList();
         },
         activated(){
             this.handleListener();
@@ -177,31 +177,32 @@
                 fetchSummary().then((res) => {
                     console.log(res.data)
                     this.total = res.data.total;
-                    this.index_count = res.data.index_count;
+                    this.project_count = res.data.project_count;
                     this.testrun_count = res.data.testrun_count;
                 })
             },
-            getIndexList() {
+            getProjectList() {
                 fetchProjectList().then((res) => {
                     var indices = res.data.data
-                    this.index_items = new Array()
+                    this.project_items = new Array()
                     for(var key of indices){
-                        this.index_items.push({"key":key, "value":key})
+                        this.project_items.push({"key":key, "value":key})
                     }
-                    if(this.index_items.length===1){
-                        this.selected_index = this.index_items[0].value
+                    if(this.project_items.length > 0){
+                        this.selected_project = this.project_items[this.project_items.length-1].value
+                        this.getTestrunList()
                     }
                 })
             },
             getTestRunList() {
-                if(!this.selected_index)
+                if(!this.selected_project)
                     return
                 var params = {
-                    'index':this.selected_index,
+                    'project':this.selected_project,
                     'id_only': 'false',
                     'limit': 10
                 }
-                fetchTestrunList(this.selected_index, params).then((res) => {
+                fetchTestrunList(this.selected_project, params).then((res) => {
                     var testruns = res.data.data
                     this.success_rate_chart_data = new Array()
                     for(var testrun of testruns){
