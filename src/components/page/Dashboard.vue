@@ -89,6 +89,27 @@
                     </el-card>
                 </el-col>
             </el-row>
+            <el-table :data="testruns" 
+              border class="table" >
+                <el-table-column prop="testrun_id" label="testrun" column-key="testrun_id" >
+                </el-table-column>
+                <el-table-column prop="suite_name" label="suite" column-key="suite_name" >
+                </el-table-column>
+                <el-table-column prop="env" label="env" column-key="env" >
+                </el-table-column>
+                <el-table-column prop="case_count" label="case_count" column-key="case_count" >
+                </el-table-column>
+                <el-table-column prop="success_rate" label="success_rate(%)" column-key="success_rate" >
+                </el-table-column>
+                <el-table-column prop="success" label="success" column-key="success" >
+                </el-table-column>
+                <el-table-column prop="failure" label="failure" column-key="failure" >
+                </el-table-column>
+                <el-table-column prop="error" label="error" column-key="error" >
+                </el-table-column>
+                <el-table-column prop="skip" label="skip" column-key="skip" >
+                </el-table-column>
+            </el-table>
         </div>
     </div>
 </template>
@@ -107,6 +128,7 @@
                 project_count: null,
                 testrun_count: null,
                 project_items: [],
+                testruns: [],
                 selected_project: '',
                 success_rate_chart_data: [
                     // {
@@ -204,6 +226,7 @@
                 }
                 fetchTestrunList(this.selected_project, params).then((res) => {
                     var testruns = res.data.data
+                    this.testruns = testruns
                     this.success_rate_chart_data = new Array()
                     for(var testrun of testruns){
                         this.success_rate_chart_data.push(
