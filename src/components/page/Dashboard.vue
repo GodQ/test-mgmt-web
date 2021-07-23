@@ -234,7 +234,7 @@
                 })
             },
             getProjectList() {
-                fetchProjectList().then((res) => {
+                fetchProjectList({"id_only": "true"}).then((res) => {
                     var indices = res.data.data
                     this.project_items = new Array()
                     for(var key of indices){

@@ -61,6 +61,12 @@
                     },
                     {
                         icon: 'el-icon-lx-cascades',
+                        index: 'project_management',
+                        title: 'Project Management',
+                        role: 'admin'
+                    },
+                    {
+                        icon: 'el-icon-lx-cascades',
                         index: 'mock_service',
                         title: 'Mock Service'
                     },

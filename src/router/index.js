@@ -35,6 +35,11 @@ export default new Router({
                     meta: { title: 'User Management', permission: 'admin' }
                 },
                 {
+                    path: '/project_management',
+                    component: resolve => require(['../components/page/project_management.vue'], resolve),
+                    meta: { title: 'Project Management', permission: 'admin' }
+                },
+                {
                     path: '/mock_service',
                     component: resolve => require(['../components/page/mock_service.vue'], resolve),
                     meta: { title: 'Mock Service' }
