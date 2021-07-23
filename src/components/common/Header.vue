@@ -30,12 +30,12 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown" >
-                        <a href="https://github.com/GodQ/test-mgmt-web" target="_blank" >
+                        <!-- <a href="https://github.com/GodQ/test-mgmt-web" target="_blank" >
                             <el-dropdown-item>About  </el-dropdown-item>
                         </a>
                         <a href="https://github.com/GodQ/test-mgmt-web" target="_blank">
                             <el-dropdown-item>Git Repo</el-dropdown-item>
-                        </a>
+                        </a> -->
                         <el-dropdown-item divided  command="logout">Log Out</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
