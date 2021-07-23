@@ -21,15 +21,6 @@
                         :value="item.value">
                     </el-option>
                 </el-select>
-                Test Environment:
-                <el-select v-model="selected_env" placeholder="Select Test Environment" class="handle-select mr10">
-                    <el-option
-                        v-for="item in project_envs"
-                        :key="item"
-                        :label="item"
-                        :value="item">
-                    </el-option>
-                </el-select>
                 Test Suite:
                 <el-select v-model="selected_suite" placeholder="Select Test Suite" class="handle-select mr10">
                     <el-option
@@ -39,6 +30,16 @@
                         :value="item">
                     </el-option>
                 </el-select>
+                Test Environment:
+                <el-select v-model="selected_env" placeholder="Select Test Environment" class="handle-select mr10">
+                    <el-option
+                        v-for="item in project_envs"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                    </el-option>
+                </el-select>
+                
         </div>
         <el-divider><i class="el-icon-bottom"></i></el-divider>
         <el-main>

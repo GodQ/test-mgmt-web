@@ -75,19 +75,19 @@
                         :value="item.value">
                     </el-option>
                 </el-select>
-        Test Environment:
-                <el-select v-model="selected_env" placeholder="Select Test Environment" class="handle-select mr10">
+        Test Suite:
+                <el-select v-model="selected_suite" placeholder="Select Test Suite" class="handle-select mr10">
                     <el-option
-                        v-for="item in project_envs"
+                        v-for="item in project_suites"
                         :key="item"
                         :label="item"
                         :value="item">
                     </el-option>
                 </el-select>
-        Test Suite:
-                <el-select v-model="selected_suite" placeholder="Select Test Suite" class="handle-select mr10">
+        Test Environment:
+                <el-select v-model="selected_env" placeholder="Select Test Environment" class="handle-select mr10">
                     <el-option
-                        v-for="item in project_suites"
+                        v-for="item in project_envs"
                         :key="item"
                         :label="item"
                         :value="item">
@@ -165,8 +165,9 @@
                 ],
                 options: {
                     title: 'Success Rate',
-                    showValue: false,
+                    showValue: true,
                     fillColor: 'rgb(45, 140, 240)',
+                    bgColor: '#F5F8FD',
                     bottomPadding: 30,
                     topPadding: 30
                 },
@@ -264,7 +265,7 @@
                             this.success_rate_chart_data.push(
                                 {"name":testrun['testrun_id'], "value":testrun['success_rate']})
                         }
-                        
+                        this.success_rate_chart_data.reverse()
                     }else{
                         alert('There is no testrun matched ')
                         console.warn('There is no testrun matched for '+ JSON.stringify(params))
