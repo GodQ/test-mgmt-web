@@ -154,7 +154,13 @@
 </template>
 
 <script>
-    import { fetchTestResults, updateTestResults, fetchTestrunList, fetchProjectList } from '../../api/data_provider_for_test_result';
+    import { 
+        fetchTestResults, 
+        updateTestResults, 
+        fetchTestrunList, 
+        fetchProjectList, 
+        fetchProjectSettings 
+    } from '../../api/data_provider_for_test_result';
     export default {
         name: 'test_result',
         data() {
@@ -166,9 +172,9 @@
                 total_num: 0,
                 project_items: [],
                 testrun_items: [],
-                project_suites: ['all', 'prod_sanity', 'stg_sanity', 'regression', 'full_regression'],
+                project_suites: ['all'],
                 selected_suite: '',
-                project_envs: ['all', 'dev0', 'stg', 'prod'],
+                project_envs: ['all'],
                 selected_env: '',
                 multipleSelection: [],
                 selected_project: '',
@@ -200,6 +206,7 @@
             "selected_project": function (value) {
                 this.selected_testrun = null
                 this.getTestrunList('project')
+                this.getProjectSettings()
             },
             "selected_env": function (value) {
                 this.selected_testrun = null
@@ -293,6 +300,22 @@
                     if(this.project_items.length > 0){
                         this.selected_project = this.project_items[this.project_items.length-1].value
                         this.getTestrunList()
+                    }
+                })
+            },
+            getProjectSettings() {
+                fetchProjectSettings(this.selected_project).then((res) => {
+                    var envs = res.data.data.envs
+                    var suites = res.data.data.suites
+                    this.project_envs = new Array()
+                    this.project_envs.push('all')
+                    for(var key of envs){
+                        this.project_envs.push(key)
+                    }
+                    this.project_suites = new Array()
+                    this.project_suites.push('all')
+                    for(var key of suites){
+                        this.project_suites.push(key)
                     }
                 })
             },

@@ -17,6 +17,10 @@
                 </el-table-column>
                 <el-table-column prop="created_time" label="created_time" column-key="created_time" sortable>
                 </el-table-column>
+                <el-table-column prop="test_result_count" label="test_result_count" column-key="test_result_count" sortable>
+                </el-table-column>
+                <el-table-column prop="store_size" label="store_size" column-key="store_size" sortable>
+                </el-table-column>
                 <el-table-column label="Actions" width="180" align="center" column-key="Actions">
                     <template slot-scope="scope">
                         <!-- <el-button type="text" icon="el-icon-edit" @click="handleProjectEdit(scope.$index, scope.row)">Edit</el-button> -->

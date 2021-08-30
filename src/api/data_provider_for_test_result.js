@@ -25,6 +25,11 @@ export const fetchTestrunList = (project_id, data) => {
     return requests.get("/api/projects/"+project_id+"/testruns", data)
 }
 
+export const fetchProjectSettings = (project_id) => {
+    // console.log(query);
+    return requests.get("/api/projects/"+project_id+"/settings")
+}
+
 export const fetchProjectList = (data) => {
     // console.log(query);
     return requests.get('/api/projects', data)

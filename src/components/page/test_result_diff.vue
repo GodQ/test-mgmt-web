@@ -158,6 +158,7 @@ import {
   fetchTestResults,
   fetchTestrunList,
   fetchProjectList,
+  fetchProjectSettings,
 } from "../../api/data_provider_for_test_result";
 export default {
   name: "test_result_diff",
@@ -190,9 +191,9 @@ export default {
       project_items: [],
       testrun_items: [],
       selected_project: "",
-      project_suites: ['all', 'prod_sanity', 'stg_sanity', 'regression', 'full_regression'],
+      project_suites: ['all'],
       selected_suite: '',
-      project_envs: ['all', 'dev0', 'stg', 'prod'],
+      project_envs: ['all'],
       selected_env: '',
       detailsVisible: false,
       details: {
@@ -211,6 +212,7 @@ export default {
             "selected_project": function (value) {
                 this.selected_testrun = null
                 this.getTestrunList('project')
+                this.getProjectSettings()
             },
             "selected_env": function (value) {
                 this.selected_testrun = null
@@ -292,6 +294,22 @@ export default {
         // this.getTestrunList()
       });
     },
+    getProjectSettings() {
+                fetchProjectSettings(this.selected_project).then((res) => {
+                    var envs = res.data.data.envs
+                    var suites = res.data.data.suites
+                    this.project_envs = new Array()
+                    this.project_envs.push('all')
+                    for(var key of envs){
+                        this.project_envs.push(key)
+                    }
+                    this.project_suites = new Array()
+                    this.project_suites.push('all')
+                    for(var key of suites){
+                        this.project_suites.push(key)
+                    }
+                })
+            },
     load_select_items() {
       //useless for now, this need fetch all data, it's too large
       var testruns = {};

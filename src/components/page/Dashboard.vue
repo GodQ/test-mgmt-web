@@ -136,7 +136,12 @@
 <script>
     import Schart from 'vue-schart';
     import bus from '../common/bus';
-    import { fetchSummary, fetchProjectList, fetchTestrunList } from '../../api/data_provider_for_test_result';
+    import { 
+        fetchSummary, 
+        fetchProjectList, 
+        fetchTestrunList, 
+        fetchProjectSettings 
+    } from '../../api/data_provider_for_test_result';
     export default {
         name: 'dashboard',
         data() {
@@ -149,9 +154,9 @@
                 testruns: [],
                 project_items: [],
                 selected_project: '',
-                project_suites: ['all', 'prod_sanity', 'stg_sanity', 'regression', 'full_regression'],
+                project_suites: ['all'],
                 selected_suite: '',
-                project_envs: ['all', 'dev0', 'stg', 'prod'],
+                project_envs: ['all'],
                 selected_env: '',
                 success_rate_chart_data: [
                     // {
@@ -199,6 +204,7 @@
         },
         watch: {
             "selected_project": function (value) {
+                this.getProjectSettings()
                 this.getTestrunList()
             },
             "selected_env": function (value) {
@@ -241,8 +247,24 @@
                         this.project_items.push({"key":key, "value":key})
                     }
                     if(this.project_items.length > 0){
-                        this.selected_project = this.project_items[this.project_items.length-1].value
+                        this.selected_project = this.project_items[0].value
                         this.getTestrunList()
+                    }
+                })
+            },
+            getProjectSettings() {
+                fetchProjectSettings(this.selected_project).then((res) => {
+                    var envs = res.data.data.envs
+                    var suites = res.data.data.suites
+                    this.project_envs = new Array()
+                    this.project_envs.push('all')
+                    for(var key of envs){
+                        this.project_envs.push(key)
+                    }
+                    this.project_suites = new Array()
+                    this.project_suites.push('all')
+                    for(var key of suites){
+                        this.project_suites.push(key)
                     }
                 })
             },
