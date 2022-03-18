@@ -4,12 +4,14 @@ import qs from 'qs'
 const service = axios.create({
     // process.env.NODE_ENV === 'development' 来判断是否开发环境
     // baseURL: 'https://www.easy-mock.com/mock/5d557cd43648ff2af04ca991/test-mgmt',
-    timeout: 5000,
+    // baseURL: 'http://10.110.124.130:5000', 
+    timeout: 60000,
     headers: {
         'Accept': 'application/json;charset=UTF-8',
         'Content-Type': 'application/json'
     }
 })
+service.defaults.timeout = 60000
 
 // service.interceptors.request.use( config => {
 //     return config;
