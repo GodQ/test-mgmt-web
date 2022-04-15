@@ -7,7 +7,7 @@
         </div>
         <div class="container">
             <el-button type="primary" icon="el-icon-create" @click="handleCreateNew">New</el-button>
-            <el-button type="primary" icon="el-icon-lx-refresh" @click="getData">Reload</el-button> 
+            <el-button type="primary" icon="el-icon-lx-refresh" @click="refresh_mock_servers_table">Reload</el-button> 
 
             <el-table :data="tableData" 
               border class="table" ref="multipleTable" 
@@ -19,11 +19,17 @@
                 </el-table-column>
                 <el-table-column prop="access_url" label="access_url" column-key="access_url" sortable>
                 </el-table-column>
-                <el-table-column prop="monitor_web_url" label="monitor_web_url" column-key="monitor_web_url">
+                <el-table-column prop="monitor_web_url" label="monitor_web_url" column-key="monitor_web_url" sortable>
+                </el-table-column>
+                <el-table-column width="100" prop="status" label="status" column-key="status" sortable>
                 </el-table-column>
                 
-                <el-table-column label="Actions" width="180" align="center" column-key="Actions">
+                <el-table-column label="Actions" width="250" align="center" column-key="Actions">
                     <template slot-scope="scope">
+                        <el-button type="text" icon="el-icon-video-play" 
+                            @click="handleStart(scope.$index, scope.row)">Start</el-button>
+                        <el-button type="text" icon="el-icon-video-pause" 
+                            @click="handleStop(scope.$index, scope.row)">Stop</el-button>
                         <el-button type="text" icon="el-icon-edit" 
                             @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
                         <el-button type="text" icon="el-icon-delete" 
@@ -36,7 +42,7 @@
         <!-- Edit -->
         <el-dialog title="Edit" :visible.sync="editVisible" width="40%">
             <el-form ref="edit_form" :model="edit_form" label-width="100px">
-                <el-form-item label="Mock Server id">
+                <el-form-item label="Mock id">
                     <el-input v-model="edit_form.mock_server_id" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="Mock URL">
@@ -66,7 +72,7 @@
         <!-- Create New -->
         <el-dialog title="Create New" :visible.sync="createVisible" width="40%">
             <el-form ref="create_form" :model="create_form" label-width="100px">
-                <el-form-item label="Mock Server id">
+                <el-form-item label="Mock id">
                     <el-input v-model="create_form.mock_server_id" :disabled="false"></el-input>
                 </el-form-item>
                 <el-form-item label="Mock URL">
@@ -92,7 +98,7 @@
 
 <script>
     import { create_mock_server, list_mock_servers, update_mock_server, 
-    get_mock_server, delete_mock_server } from '../../api/data_provider_for_mock';
+    get_mock_server, start_mock_server, stop_mock_server, delete_mock_server } from '../../api/data_provider_for_mock';
     export default {
         name: 'mock_service',
         data() {
@@ -120,7 +126,7 @@
         },
         watch: {},
         created() {
-            this.getData();
+            this.refresh_mock_servers_table();
             console.log(sessionStorage.getItem('auth.user_role'))
         },
         computed: {
@@ -129,7 +135,7 @@
             }
         },
         methods: {
-            getData(params) {
+            refresh_mock_servers_table(params) {
                 list_mock_servers().then((res) => {
                     this.tableData = res.data.items;
                     this.total_num = this.tableData.length
@@ -137,7 +143,7 @@
             },
             
             reload() {
-                this.getData()
+                this.refresh_mock_servers_table()
             },
             handleEdit(index, row) {
                 var row_data = JSON.parse(JSON.stringify(row))
@@ -146,6 +152,20 @@
                     this.edit_form = res.data;
                     this.edit_form.mock_rules = JSON.stringify(this.edit_form.mock_rules, null, " ")
                     this.editVisible = true;
+                })
+            },
+            handleStart(index, row) {
+                var row_data = JSON.parse(JSON.stringify(row))
+                var mock_server_id = row_data['mock_server_id']
+                start_mock_server(mock_server_id).then((res) => {
+                    this.refresh_mock_servers_table()
+                })
+            },
+            handleStop(index, row) {
+                var row_data = JSON.parse(JSON.stringify(row))
+                var mock_server_id = row_data['mock_server_id']
+                stop_mock_server(mock_server_id).then((res) => {
+                    this.refresh_mock_servers_table()
                 })
             },
             handleDelete(index, row) {
@@ -162,7 +182,7 @@
                             type: 'success',
                             message: 'Delete Successfully!'
                         });
-                        this.getData()
+                        this.refresh_mock_servers_table()
                     })
                 })
                 
@@ -184,7 +204,7 @@
                     // console.log(res)
                     this.editVisible = false;
                     this.$message.success(`Save successfully`);
-                    this.getData()
+                    this.refresh_mock_servers_table()
                 }).catch(function (error) {
                     console.error(error)
                     if (error.response) {
@@ -212,7 +232,7 @@
                     // console.log(res)
                     this.createVisible = false;
                     this.$message.success(`Save successfully`);
-                    this.getData()
+                    this.refresh_mock_servers_table()
                 }).catch(function (error) {
                     console.error(error)
                     if (error.response) {
