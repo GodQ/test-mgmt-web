@@ -135,6 +135,12 @@
                 <el-form-item label="Status">
                     <el-input v-model="details.case_result" :disabled="true"></el-input>
                 </el-form-item>
+                <el-form-item label="Test Suite">
+                    <el-input v-model="details.suite_name" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="Duration">
+                    <el-input v-model="details.duration" :disabled="true"></el-input>
+                </el-form-item>
                 <el-form-item label="Bugs">
                     <el-input v-model="details.bugs" :disabled="true"></el-input>
                 </el-form-item>
