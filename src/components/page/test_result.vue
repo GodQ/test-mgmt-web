@@ -51,9 +51,17 @@
                 </el-select>
                 Keyword:
                 <el-input v-model="inputed_word" placeholder="search keyword" class="handle-input mr10"></el-input>
+                Results:
+                <el-select v-model="case_result_list" multiple placeholder="Test Results">
+                    <el-option
+                    v-for="item in case_result_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                    </el-option>
+                </el-select>
                 <el-button type="primary" icon="el-icon-search" @click="search">Search</el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="reload">Reload</el-button> 
-                
             </div>
 
             <el-table :data="tableData" 
@@ -191,6 +199,13 @@
                 multipleSelection: [],
                 selected_project: '',
                 selected_testrun: '',
+                case_result_options: [
+                    {value: 'success', label: 'success'},
+                    {value: 'error', label: 'error'},
+                    {value: 'failure', label: 'failure'},
+                    {value: 'skip', label: 'skip'},
+                ],
+                case_result_list: [],
                 inputed_word: '',
                 edit_disabled: true,
                 editVisible: false,
@@ -357,9 +372,8 @@
                     this.selected_project = this.project_items[0].value
                 }
             },
-            search() {
-                this.cur_page = 1;
-                var params = {}
+            get_search_params() {
+                var params  = {}
                 if(this.selected_project){
                     params["project_id"] = this.selected_project
                 }
@@ -369,42 +383,32 @@
                 if(this.inputed_word){
                     params["keyword"] = this.inputed_word
                 }
+                if(this.case_result_list){
+                    params["case_result"] = this.case_result_list.join(',')
+                }
+                return params;
+            },
+            search() {
+                this.cur_page = 1;
+                var params = this.get_search_params()
                 this.getTestResults(params)
             },
             handleCurrentChange(val) {
                 this.cur_page = val;
-                var params = {}
+                var params = this.get_search_params()
                 params["limit"] = this.page_size
                 if(this.cur_page){
                     params["offset"] = (this.cur_page-1) * this.page_size
-                }
-                if(this.selected_project){
-                    params["project_id"] = this.selected_project
-                }
-                if(this.selected_testrun){
-                    params["testrun_id"] = this.selected_testrun
-                }
-                if(this.inputed_word){
-                    params["keyword"] = this.inputed_word
                 }
                 console.info(params)
                 this.getTestResults(params)
             },
             handleSizeChange(val) {
                 this.page_size = val;
-                var params = {}
+                var params = this.get_search_params()
                 params["limit"] = this.page_size
                 if(this.cur_page){
                     params["offset"] = (this.cur_page-1) * this.page_size
-                }
-                if(this.selected_project){
-                    params["project_id"] = this.selected_project
-                }
-                if(this.selected_testrun){
-                    params["testrun_id"] = this.selected_testrun
-                }
-                if(this.inputed_word){
-                    params["keyword"] = this.inputed_word
                 }
                 console.info(params)
                 this.getTestResults(params)
