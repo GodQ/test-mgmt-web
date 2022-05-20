@@ -62,8 +62,14 @@
                 @filter-change="handleFilterChange">
                 <el-table-column type="selection" width="55" column-key="selection" align="center"></el-table-column>
                 <el-table-column prop="testrun_id" label="testrun_id" column-key="testrun_id" sortable>
-                </el-table-column>
+                <!-- </el-table-column>
                 <el-table-column prop="case_id" label="case_id" column-key="case_id" sortable>
+                </el-table-column> -->
+                </el-table-column>
+                <el-table-column prop="module" label="module" column-key="module" sortable>
+                </el-table-column>
+                </el-table-column>
+                <el-table-column prop="case" label="case" column-key="case" sortable>
                 </el-table-column>
                 <el-table-column prop="case_result" label="case_result" column-key="case_result" sortable>
                 </el-table-column>
@@ -261,7 +267,14 @@
             getTestResults(params) {
                 fetchTestResults(this.selected_project, params).then((res) => {
                     this.tableData = res.data.data;
-                    this.total_num = res.data.page_info.total
+                    this.total_num = res.data.page_info.total;
+                    for (let i = 0; i < this.tableData.length; i++) {
+                        var t = this.tableData[i];
+                        var case_id = t['case_id'];
+                        var index = case_id.lastIndexOf(".");
+                        t['module'] = case_id.substring(0, index);
+                        t['case'] = case_id.substring(index+1, case_id.length);
+                    }
                     // console.info(this.tableData)
                     // console.info(this.total_num)
                     // this.load_select_items()
