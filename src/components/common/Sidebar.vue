@@ -50,8 +50,20 @@
                     },
                     {
                         icon: 'el-icon-lx-cascades',
-                        index: 'test_result_diff',
-                        title: 'Test Result Diff'
+                        index: 'test_result_analysis',
+                        title: 'Test Result Analysis',
+                        subs: [
+                            {
+                                icon: 'el-icon-lx-cascades',
+                                index: 'test_result_diff',
+                                title: 'Test Result Diff'
+                            },
+                            {
+                                icon: 'el-icon-lx-cascades',
+                                index: 'test_case_duration',
+                                title: 'Test Case Duration'
+                            },
+                        ]
                     },
                     {
                         icon: 'el-icon-lx-cascades',
