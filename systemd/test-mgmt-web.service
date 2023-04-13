@@ -5,7 +5,7 @@ StartLimitBurst=3
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/npm run serve
+ExecStart=/bin/bash -c '/usr/bin/npm run serve 2>&1 | tee -a /tmp/web.log'
 Restart=always
 WorkingDirectory=/root/test-mgmt/test-mgmt-web
 
